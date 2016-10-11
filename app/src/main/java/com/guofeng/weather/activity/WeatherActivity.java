@@ -69,8 +69,7 @@ public class WeatherActivity extends Activity {
     private TextView day_2_cond;
     private TextView day_2_tmp_min;
     private TextView day_2_tmp_max;
-
-    private int ceshi;
+    
     private TextView day_3_date;
     private TextView day_3_cond;
     private TextView day_3_tmp_min;

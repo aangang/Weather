@@ -7,13 +7,14 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import com.guofeng.weather.model.WeatherBasicInfo;
+
+import com.guofeng.weather.model.WeatherInfo;
 import com.guofeng.weather.receiver.AutoUpdateReceiver;
 import com.guofeng.weather.util.ACache;
-import com.guofeng.weather.util.C;
-import com.guofeng.weather.util.HttpCallback;
-import com.guofeng.weather.util.HttpUtil;
-import com.guofeng.weather.util.Utility;
+import com.guofeng.weather.base.C;
+import com.guofeng.weather.util.net.HttpCallback;
+import com.guofeng.weather.util.net.HttpUtil;
+import com.guofeng.weather.util.net.Utility;
 
 
 public class AutoUpdateService extends Service {
@@ -53,14 +54,14 @@ public class AutoUpdateService extends Service {
 
     private void updateWeather() {
 
-        String city_code = ((WeatherBasicInfo) aCache.getAsObject("basicInfo")).getCityId();
+        String city_code = ((WeatherInfo) aCache.getAsObject("tmpWeatherInfo")).getHeWeatherdataservice().get(0).getBasic().getId();
         String address = "https://api.heweather.com/x3/weather?cityid="
                 + city_code + "&key="
                 + C.HEFENG_KEY;
 
         HttpUtil.sendHttpRequest(address, new HttpCallback() {
             @Override
-            public void onFinish(String response) {
+            public void onFinish(StringBuilder response) {
                 Utility.handleWeatherResponse(response, aCache);
             }
 

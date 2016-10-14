@@ -69,7 +69,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_weight="2">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -92,7 +92,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_weight="2">
 
                 <TextView
 
@@ -139,12 +139,12 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginBottom="4dp"
             android:layout_marginTop="4dp"
             android:background="@color/hr" />
 
 
     </LinearLayout>
+    <!-- ======================================== -->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -152,208 +152,7 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/hour_1_time"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:textColor="@color/title_bar"
-                        android:textSize="14sp" />
-
-                    <ImageView
-                        android:id="@+id/hour_1_img"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:id="@+id/hour_1_tmp"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:textColor="@color/title_bar"
-                        android:textSize="14sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/hour_2_time"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:textColor="@color/title_bar"
-                            android:textSize="14sp" />
-
-                        <ImageView
-                            android:id="@+id/hour_2_img"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:textColor="@color/title_bar"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/hour_2_tmp"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/hour_3_time"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:textColor="@color/title_bar"
-                            android:textSize="14sp" />
-
-                        <ImageView
-                            android:id="@+id/hour_3_img"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1" />
-
-                        <TextView
-                            android:id="@+id/hour_3_tmp"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:textColor="@color/title_bar"
-                            android:textSize="14sp" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/hour_4_time"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:textColor="@color/title_bar"
-                            android:textSize="14sp" />
-
-                        <ImageView
-                            android:id="@+id/hour_4_img"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1" />
-
-                        <TextView
-                            android:id="@+id/hour_4_tmp"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:textColor="@color/title_bar"
-                            android:textSize="14sp" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/hour_5_time"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:textColor="@color/title_bar"
-                            android:textSize="14sp" />
-
-                        <ImageView
-                            android:id="@+id/hour_5_img"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-
-                            android:layout_weight="1" />
-
-                        <TextView
-                            android:id="@+id/hour_5_tmp"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:textColor="@color/title_bar"
-                            android:textSize="14sp" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="4dp"
-            android:background="@color/hr" />
-
-        <!-- ======================================== -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -365,7 +164,7 @@
                 android:id="@+id/day_1_date"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:textColor="@color/title_bar"
                 android:textSize="14sp" />
 
@@ -373,7 +172,7 @@
                 android:id="@+id/day_1_cond"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:textColor="@color/title_bar"
                 android:textSize="15sp" />
 
@@ -406,7 +205,7 @@
                 android:id="@+id/day_2_date"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:textColor="@color/title_bar"
                 android:textSize="14sp" />
 
@@ -414,7 +213,7 @@
                 android:id="@+id/day_2_cond"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:textColor="@color/title_bar"
                 android:textSize="15sp" />
 
@@ -447,7 +246,7 @@
                 android:id="@+id/day_3_date"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:textColor="@color/title_bar"
                 android:textSize="14sp" />
 
@@ -455,7 +254,7 @@
                 android:id="@+id/day_3_cond"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:textColor="@color/title_bar"
                 android:textSize="15sp" />
 
@@ -469,6 +268,47 @@
 
             <TextView
                 android:id="@+id/day_3_tmp_max"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/title_bar"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/day_4_date"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:textColor="@color/title_bar"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/day_4_cond"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:textColor="@color/title_bar"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/day_4_tmp_min"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/title_bar"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/day_4_tmp_max"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

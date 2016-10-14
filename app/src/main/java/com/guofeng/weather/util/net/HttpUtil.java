@@ -1,4 +1,4 @@
-package com.guofeng.weather.util;
+package com.guofeng.weather.util.net;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -8,7 +8,7 @@ import java.net.URL;
 
 public class HttpUtil {
 
-    //从服务器获取数据（第一行代码上解释比较详细）
+    //从服务器获取数据
     public static void sendHttpRequest(
             final String address, final HttpCallback callback) {
 
@@ -32,7 +32,7 @@ public class HttpUtil {
                         builder.append(line);
                     }
                     if (callback != null) {
-                        callback.onFinish(builder.toString());
+                        callback.onFinish(builder);
                     }
 
                 } catch (Exception e) {

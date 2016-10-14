@@ -6,14 +6,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.guofeng.weather.model.City;
-import com.guofeng.weather.util.C;
+import com.guofeng.weather.base.C;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class WeatherDB {
-
 
     private static WeatherDB weatherDB;//单例对象
     private SQLiteDatabase mSQLiteDatabase; //数据库处理对象
@@ -35,34 +34,14 @@ public class WeatherDB {
     }
     //------------------------------------------------------------------
 
-    //保存一个城市对象数据
+    //插入一个城市对象的数据
     public void saveCity(City city) {
         if (city != null) {
             ContentValues contentValues = new ContentValues();
-            contentValues.put("CITY_NAME_EN", city.getCity_name_en());
-            contentValues.put("CITY_NAME_CH", city.getCity_name_ch());
+            contentValues.put("CITY_NAME", city.getCity_name());
             contentValues.put("CITY_CODE", city.getCity_code());
             mSQLiteDatabase.insert("CITY", null, contentValues);
         }
-    }
-
-    //获取所有的城市
-    public List<City> loadCities() {
-        List<City> cities = new ArrayList<>();
-        Cursor cursor = mSQLiteDatabase.query("CITY", null, null, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            do {
-                City city = new City();
-                city.setId( cursor.getInt(cursor.getColumnIndex("ID")) );
-                city.setCity_name_en( cursor.getString(cursor.getColumnIndex("CITY_NAME_EN")) );
-                city.setCity_name_ch( cursor.getString(cursor.getColumnIndex("CITY_NAME_CH")) );
-                city.setCity_code( cursor.getString(cursor.getColumnIndex("CITY_CODE")) );
-                cities.add(city);
-            } while (cursor.moveToNext());
-        }
-        if (cursor != null)
-            cursor.close();
-        return cities;
     }
 
     //根据名称获取某一个或多个匹配的城市
@@ -71,7 +50,7 @@ public class WeatherDB {
         Cursor cursor = mSQLiteDatabase.query(
                 "CITY",
                 null,
-                "CITY_NAME_CH like ?",
+                "CITY_NAME like ?",
                 new String[]{name + "%"},
                 null,
                 null,
@@ -80,8 +59,7 @@ public class WeatherDB {
         while (cursor.moveToNext()) {
             City city = new City();
             city.setId(cursor.getInt(cursor.getColumnIndex("ID")));
-            city.setCity_name_en(cursor.getString(cursor.getColumnIndex("CITY_NAME_EN")));
-            city.setCity_name_ch(cursor.getString(cursor.getColumnIndex("CITY_NAME_CH")));
+            city.setCity_name(cursor.getString(cursor.getColumnIndex("CITY_NAME")));
             city.setCity_code(cursor.getString(cursor.getColumnIndex("CITY_CODE")));
             cities.add(city);
         }
@@ -110,4 +88,24 @@ public class WeatherDB {
         contentValues.put("state", 1);
         mSQLiteDatabase.update("data_state", contentValues, null, null);
     }
+
+    //获取所有的城市
+    public List<City> loadCities() {
+        List<City> cities = new ArrayList<>();
+        Cursor cursor = mSQLiteDatabase.query("CITY", null, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                City city = new City();
+                city.setId(cursor.getInt(cursor.getColumnIndex("ID")));
+                city.setCity_name(cursor.getString(cursor.getColumnIndex("CITY_NAME")));
+                city.setCity_code(cursor.getString(cursor.getColumnIndex("CITY_CODE")));
+                cities.add(city);
+            } while (cursor.moveToNext());
+        }
+        if (cursor != null)
+            cursor.close();
+        return cities;
+    }
+
+
 }

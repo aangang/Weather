@@ -14,7 +14,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 
 import com.guofeng.weather.R;
-import com.guofeng.weather.util.C;
+import com.guofeng.weather.base.C;
 
 import net.youmi.android.AdManager;
 import net.youmi.android.normal.common.ErrorCode;

@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class WeatherOpenHelper extends SQLiteOpenHelper {
 
     //创建 城市 表
-    private static final String CREATE_CITY = "CREATE TABLE CITY(ID INTEGER PRIMARY KEY,CITY_NAME_EN TEXT,CITY_NAME_CH TEXT,CITY_CODE TEXT)";
+    private static final String CREATE_CITY = "CREATE TABLE CITY(ID INTEGER PRIMARY KEY,CITY_NAME TEXT,CITY_CODE TEXT)";
     //创建有无数据状态表
     private static final String DATA_STATE = "CREATE TABLE DATA_STATE(STATE INTEGER PRIMARY KEY)";
     //更新状态表 数据为0表示暂无数据

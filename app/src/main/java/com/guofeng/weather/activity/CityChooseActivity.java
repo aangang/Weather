@@ -11,16 +11,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.guofeng.weather.R;
+import com.guofeng.weather.base.C;
 import com.guofeng.weather.db.WeatherDB;
 import com.guofeng.weather.model.City;
 import com.guofeng.weather.util.ACache;
-import com.guofeng.weather.util.C;
-import com.guofeng.weather.util.HttpCallback;
-import com.guofeng.weather.util.HttpUtil;
-import com.guofeng.weather.util.Utility;
+import com.guofeng.weather.util.SharedPreferenceUtil;
+import com.guofeng.weather.util.ToastUtil;
+import com.guofeng.weather.util.net.HttpCallback;
+import com.guofeng.weather.util.net.HttpUtil;
+import com.guofeng.weather.util.net.Utility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +35,13 @@ public class CityChooseActivity extends Activity {
     private ProgressDialog mProgressDialog;//进度条对话框
     private ACache aCache;
     private EditText editText;//搜索编辑框
+
     private ArrayAdapter<String> mAdapter;//ListView适配器
     private ListView mListView;//城市ListView
     private List<String> cityNames = new ArrayList<>();//用于存放与输入的内容相匹配的城市名称字符串
-    private City mCity_selected;//选中的城市
-    private List<City> mCities;//用于存放与输入的内容相匹配的城市名称对象
+
+    private City myCity_selected;//选中的城市
+    private List<City> myCities;//用于存放与输入的内容相匹配的城市名称对象
 
     private static final int NONE_DATA = 0;//标识是否有初始化城市数据，0是-1否
 
@@ -59,12 +62,13 @@ public class CityChooseActivity extends Activity {
     private void init() {
         weatherDB = WeatherDB.getInstance(this);//获取数据库处理对象
         aCache = ACache.get(this);
-        //先检查本地是否已同步过城市数据，如果没有，则从服务器同步
+
+        //先检查本地是否初始化城市数据，如果没有，则从服务器同步
         if (weatherDB.checkDataState() == NONE_DATA) {
             queryCitiesFromServer();
         }
         //获取本地存储的所有的城市
-        //mCities = queryCitiesFromLocal("");
+        //myCities = queryCitiesFromLocal("");
     }
 
     private void editTextListener() {
@@ -79,13 +83,9 @@ public class CityChooseActivity extends Activity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 //每次文本变化就去本地数据库查询匹配的城市
-
-                mCities = queryCitiesFromLocal(s.toString());
-
+                myCities = queryCitiesFromLocal(s.toString());
                 //通知更新
                 mAdapter.notifyDataSetChanged();
-
-
             }
 
             @Override
@@ -103,8 +103,9 @@ public class CityChooseActivity extends Activity {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mCity_selected = mCities.get(position);//根据点击的位置获取对应的City对象
+                myCity_selected = myCities.get(position);//根据点击的位置获取对应的City对象
                 //根据点击的城市从服务器获取天气数据
+                SharedPreferenceUtil.getInstance().setCityId(myCity_selected.getCity_code());
                 queryWeatherFromServer();
             }
         });
@@ -121,14 +122,14 @@ public class CityChooseActivity extends Activity {
         //从服务器获取数据
         HttpUtil.sendHttpRequest(address, new HttpCallback() {
             @Override
-            public void onFinish(String response) {
+            public void onFinish(StringBuilder response) {
                 //处理从服务器获取的数据
-                if (Utility.handleCityResponse(weatherDB, response)) {
+                if (Utility.handleCityResponse(weatherDB, response.toString())) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             closeProgressDialog();
-                            weatherDB.updateDataState();
+                            weatherDB.updateDataState();//写入已读状态
                         }
                     });
                 }
@@ -141,7 +142,7 @@ public class CityChooseActivity extends Activity {
                     @Override
                     public void run() {
                         closeProgressDialog();
-                        Toast.makeText(CityChooseActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        ToastUtil.showShortToast(e.getMessage());
                     }
                 });
             }
@@ -153,7 +154,7 @@ public class CityChooseActivity extends Activity {
         List<City> cities = weatherDB.loadCitiesByName(name);
         cityNames.clear();
         for (City city : cities) {
-            cityNames.add(city.getCity_name_ch());
+            cityNames.add(city.getCity_name());
         }
         return cities;
     }
@@ -162,37 +163,37 @@ public class CityChooseActivity extends Activity {
     private void queryWeatherFromServer() {
 
         String address = "https://api.heweather.com/x3/weather?cityid="
-                + mCity_selected.getCity_code()
+                + myCity_selected.getCity_code()
                 + "&key=" + C.HEFENG_KEY;
         showProgressDialog();
 
         HttpUtil.sendHttpRequest(address, new HttpCallback() {
             @Override
-            public void onFinish(String response) {
-                //将从服务器获取的JSON数据进行解析
-                if (Utility.handleWeatherResponse(response, aCache)) {
-                    //注意这里对线程的处理
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+            public void onFinish(final StringBuilder response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //将从服务器获取的JSON数据进行解析
+                        if (Utility.handleWeatherResponse(response, aCache)) {
                             closeProgressDialog();
-                            //处理完天气数据，说明已经保存到本地，我们不用再把数据封装到Intent里面返回给MaoWeatherActivity
+                            //处理完天气数据，说明已经保存到本地，我们不用再把数据封装到Intent里面返回给WeatherActivity
                             //可以在onActivityResult里面从本地存储中获取
                             setResult(RESULT_OK);
                             finish();
                         }
-                    });
-                }
+                    }
+
+                });
+
             }
 
             @Override
             public void onError(Exception e) {
-                //注意这里对线程的处理
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         closeProgressDialog();
-                        Toast.makeText(CityChooseActivity.this, "数据更新失败", Toast.LENGTH_SHORT).show();
+                        ToastUtil.showShortToast("城市数据更新失败");
                     }
                 });
             }

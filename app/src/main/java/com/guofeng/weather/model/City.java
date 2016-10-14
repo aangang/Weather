@@ -4,8 +4,7 @@ package com.guofeng.weather.model;
 public class City {
 
     private int Id;
-    private String city_name_en;
-    private String city_name_ch;
+    private String city_name;
     private String city_code;
 
     public int getId() {
@@ -16,20 +15,12 @@ public class City {
         Id = id;
     }
 
-    public String getCity_name_en() {
-        return city_name_en;
+    public String getCity_name() {
+        return city_name;
     }
 
-    public void setCity_name_en(String city_name_en) {
-        this.city_name_en = city_name_en;
-    }
-
-    public String getCity_name_ch() {
-        return city_name_ch;
-    }
-
-    public void setCity_name_ch(String city_name_ch) {
-        this.city_name_ch = city_name_ch;
+    public void setCity_name(String city_name) {
+        this.city_name = city_name;
     }
 
     public String getCity_code() {

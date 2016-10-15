@@ -1,12 +1,14 @@
 package com.guofeng.weather.util.net;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.guofeng.weather.db.WeatherDB;
 import com.guofeng.weather.model.City;
 import com.guofeng.weather.model.WeatherInfo;
 import com.guofeng.weather.util.ACache;
+import com.guofeng.weather.util.ToastUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -45,9 +47,14 @@ public class Utility {
     //处理从服务器返回的复杂的JSON数据
     public synchronized static boolean handleWeatherResponse(StringBuilder response, ACache aCache) {
         if (!TextUtils.isEmpty(response)) {
+            Log.e("FFF",response.toString());
             String info = response.deleteCharAt(11).deleteCharAt(15).delete(22, 26).toString();
             Gson myGson = new Gson();
             WeatherInfo bean = myGson.fromJson(info, WeatherInfo.class);
+            if (bean.getHeWeatherdataservice().get(0).getStatus()!="ok"){
+                ToastUtil.showLongToast("今日API已经用尽调用次数！");
+                return false;
+            }
             aCache.put("tmpWeatherInfo", bean, ACache.TIME_DAY);
             return true;
         }

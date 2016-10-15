@@ -12,6 +12,7 @@ import com.guofeng.weather.model.WeatherInfo;
 import com.guofeng.weather.receiver.AutoUpdateReceiver;
 import com.guofeng.weather.util.ACache;
 import com.guofeng.weather.base.C;
+import com.guofeng.weather.util.ToastUtil;
 import com.guofeng.weather.util.net.HttpCallback;
 import com.guofeng.weather.util.net.HttpUtil;
 import com.guofeng.weather.util.net.Utility;
@@ -19,10 +20,17 @@ import com.guofeng.weather.util.net.Utility;
 
 public class AutoUpdateService extends Service {
 
-    ACache aCache;
+    private ACache aCache;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        aCache = ACache.get(this);
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -31,19 +39,14 @@ public class AutoUpdateService extends Service {
         });
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        int hour = 60 * 60 * 1000;
+        int hour = 60 * 60 * 1000;//一小时毫秒数
         long triggerTime = SystemClock.currentThreadTimeMillis() + hour;
-        Intent intent_for_receiver = new Intent(this, AutoUpdateReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        Intent i = new Intent(this, AutoUpdateReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, i, 0);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerTime, pendingIntent);
 
         return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        aCache = ACache.get(this);
     }
 
     @Nullable
@@ -62,12 +65,14 @@ public class AutoUpdateService extends Service {
         HttpUtil.sendHttpRequest(address, new HttpCallback() {
             @Override
             public void onFinish(StringBuilder response) {
-                Utility.handleWeatherResponse(response, aCache);
+                if (Utility.handleWeatherResponse(response, aCache)) {
+                    ToastUtil.showShortToast("定时更新天气完毕");
+                }
             }
 
             @Override
             public void onError(Exception e) {
-                e.printStackTrace();
+                ToastUtil.showShortToast("定时更新天气失败");
             }
         });
     }

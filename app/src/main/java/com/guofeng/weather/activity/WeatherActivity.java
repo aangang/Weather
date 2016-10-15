@@ -3,9 +3,13 @@ package com.guofeng.weather.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.guofeng.weather.R;
@@ -62,6 +66,11 @@ public class WeatherActivity extends Activity {
     private TextView day_4_cond;
     private TextView day_4_tmp_min;
     private TextView day_4_tmp_max;
+    private ImageView myimg;
+
+    private ScrollView myScroll;
+    private SwipeRefreshLayout mySwipeRefresh;
+    private TextView tv_refresh;
 
 
     @Override
@@ -75,7 +84,9 @@ public class WeatherActivity extends Activity {
         readyFristData();//准备首次的数据
         startAutoUpdataService();//启动自动更新服务
 
+
     }
+
 
     private void init() {
         mCityName = (TextView) findViewById(R.id.textView_city_name);
@@ -110,6 +121,37 @@ public class WeatherActivity extends Activity {
         day_4_tmp_min = (TextView) findViewById(R.id.day_4_tmp_min);
         day_4_tmp_max = (TextView) findViewById(R.id.day_4_tmp_max);
 
+
+        myimg = (ImageView) findViewById(R.id.myimg);
+
+
+        tv_refresh = (TextView) findViewById(R.id.tv_refresh);
+        mySwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.mySwipeRefresh);
+
+        mySwipeRefresh.setColorSchemeResources(
+                android.R.color.holo_blue_light,
+                android.R.color.holo_red_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_green_light
+        );
+        mySwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                tv_refresh.setVisibility(View.VISIBLE);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateWeatherFromServer();
+
+
+                    }
+                });
+                mySwipeRefresh.setRefreshing(false);
+                tv_refresh.setText("刷新完成");
+               // tv_refresh.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
     private void btnClickListener() {
@@ -140,10 +182,18 @@ public class WeatherActivity extends Activity {
 
         //首次安装，判断本地存储有无数据，默认从服务器获取北京数据
         if (aCache.getAsObject("tmpWeatherInfo") == null) {
+            Log.e("FFF","从服务器获取数据！");
             updateWeatherFromServer();
         } else {
             //从本地取数据，也就是上次访问的城市，先确定这个
-            loadWeatherData();
+            bean = (WeatherInfo) aCache.getAsObject("tmpWeatherInfo");
+            Log.e("FFF","从本地获取数据！");
+            if (bean.getHeWeatherdataservice().get(0).getStatus()!="ok"){
+                ToastUtil.showLongToast("今日API已经用尽调用次数！");
+            }else{
+                loadWeatherData();
+            }
+
         }
     }
 
@@ -207,6 +257,7 @@ public class WeatherActivity extends Activity {
         startService(intent);
     }
 
+
     //从服务器更新数据（CityChooseActivity中有相似方法）
     private void updateWeatherFromServer() {
         String address = "https://api.heweather.com/x3/weather?cityid="
@@ -224,6 +275,7 @@ public class WeatherActivity extends Activity {
                         if (Utility.handleWeatherResponse(response, aCache)) {
                             loadWeatherData();
                             ToastUtil.showShortToast("更新天气完毕");
+
                         }
                     }
                 });

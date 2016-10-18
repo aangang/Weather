@@ -18,11 +18,13 @@ import com.guofeng.weather.model.City;
 import com.guofeng.weather.model.WeatherInfo;
 import com.guofeng.weather.service.AutoUpdateService;
 import com.guofeng.weather.util.ACache;
+import com.guofeng.weather.util.AMapLocationUtil;
 import com.guofeng.weather.util.SharedPreferenceUtil;
 import com.guofeng.weather.util.ToastUtil;
 import com.guofeng.weather.util.net.HttpCallback;
 import com.guofeng.weather.util.net.HttpUtil;
 import com.guofeng.weather.util.net.Utility;
+import com.guofeng.weather.util.net.VolleyUtil;
 
 /**
  * Created by GUOFENG on 2016/10/4.
@@ -31,9 +33,11 @@ public class WeatherActivity extends Activity {
 
     //ASimpleCache 是一个为android制定的轻量级的开源缓存框架
     private ACache aCache;
+    private AMapLocationUtil gaode = new AMapLocationUtil();
 
     public static final int REQUEST_CODE = 1;
     private City mCurrentCity = new City();//当前显示的城市对象
+    private VolleyUtil weatherImg = new VolleyUtil();
 
     private WeatherInfo bean;
     private Button mChangeCityButton;//改变城市按钮
@@ -48,22 +52,22 @@ public class WeatherActivity extends Activity {
 
 
     private TextView day_1_date;
-    private TextView day_1_cond;
+    private ImageView day_1_cond;
     private TextView day_1_tmp_min;
     private TextView day_1_tmp_max;
 
     private TextView day_2_date;
-    private TextView day_2_cond;
+    private ImageView day_2_cond;
     private TextView day_2_tmp_min;
     private TextView day_2_tmp_max;
 
     private TextView day_3_date;
-    private TextView day_3_cond;
+    private ImageView day_3_cond;
     private TextView day_3_tmp_min;
     private TextView day_3_tmp_max;
 
     private TextView day_4_date;
-    private TextView day_4_cond;
+    private ImageView day_4_cond;
     private TextView day_4_tmp_min;
     private TextView day_4_tmp_max;
     private ImageView myimg;
@@ -100,24 +104,23 @@ public class WeatherActivity extends Activity {
         mChangeCityButton = (Button) findViewById(R.id.button_changeCity);
         mRefreshButton = (Button) findViewById(R.id.button_refresh);
 
-
         day_1_date = (TextView) findViewById(R.id.day_1_date);
-        day_1_cond = (TextView) findViewById(R.id.day_1_cond);
+        day_1_cond = (ImageView) findViewById(R.id.day_1_cond);
         day_1_tmp_min = (TextView) findViewById(R.id.day_1_tmp_min);
         day_1_tmp_max = (TextView) findViewById(R.id.day_1_tmp_max);
 
         day_2_date = (TextView) findViewById(R.id.day_2_date);
-        day_2_cond = (TextView) findViewById(R.id.day_2_cond);
+        day_2_cond = (ImageView) findViewById(R.id.day_2_cond);
         day_2_tmp_min = (TextView) findViewById(R.id.day_2_tmp_min);
         day_2_tmp_max = (TextView) findViewById(R.id.day_2_tmp_max);
 
         day_3_date = (TextView) findViewById(R.id.day_3_date);
-        day_3_cond = (TextView) findViewById(R.id.day_3_cond);
+        day_3_cond = (ImageView) findViewById(R.id.day_3_cond);
         day_3_tmp_min = (TextView) findViewById(R.id.day_3_tmp_min);
         day_3_tmp_max = (TextView) findViewById(R.id.day_3_tmp_max);
 
         day_4_date = (TextView) findViewById(R.id.day_4_date);
-        day_4_cond = (TextView) findViewById(R.id.day_4_cond);
+        day_4_cond = (ImageView) findViewById(R.id.day_4_cond);
         day_4_tmp_min = (TextView) findViewById(R.id.day_4_tmp_min);
         day_4_tmp_max = (TextView) findViewById(R.id.day_4_tmp_max);
 
@@ -125,33 +128,6 @@ public class WeatherActivity extends Activity {
         myimg = (ImageView) findViewById(R.id.myimg);
 
 
-        tv_refresh = (TextView) findViewById(R.id.tv_refresh);
-        mySwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.mySwipeRefresh);
-
-        mySwipeRefresh.setColorSchemeResources(
-                android.R.color.holo_blue_light,
-                android.R.color.holo_red_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_green_light
-        );
-        mySwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                tv_refresh.setVisibility(View.VISIBLE);
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateWeatherFromServer();
-
-
-                    }
-                });
-                mySwipeRefresh.setRefreshing(false);
-                tv_refresh.setText("刷新完成");
-               // tv_refresh.setVisibility(View.INVISIBLE);
-            }
-        });
     }
 
     private void btnClickListener() {
@@ -178,23 +154,31 @@ public class WeatherActivity extends Activity {
     }
 
     private void readyFristData() {
+        gaode.start();
         aCache = ACache.get(this);
+
+
 
         //首次安装，判断本地存储有无数据，默认从服务器获取北京数据
         if (aCache.getAsObject("tmpWeatherInfo") == null) {
-            Log.e("FFF","从服务器获取数据！");
+            Log.e("FFF", "从服务器获取数据！");
             updateWeatherFromServer();
         } else {
             //从本地取数据，也就是上次访问的城市，先确定这个
             bean = (WeatherInfo) aCache.getAsObject("tmpWeatherInfo");
-            Log.e("FFF","从本地获取数据！");
-            if (bean.getHeWeatherdataservice().get(0).getStatus()!="ok"){
-                ToastUtil.showLongToast("今日API已经用尽调用次数！");
-            }else{
+            Log.e("FFF", "从本地获取数据！");
+
+            if (bean.getHeWeatherdataservice().get(0).getStatus().equals("ok")) {
                 loadWeatherData();
+            } else {
+                //ToastUtil.showLongToast("今日API已经用尽调用次数！");
+                updateWeatherFromServer();
             }
 
         }
+
+
+
     }
 
 
@@ -222,28 +206,30 @@ public class WeatherActivity extends Activity {
         mTemp1.setText(my.getDaily_forecast().get(0).getTmp().getMin());
         mTemp2.setText(my.getDaily_forecast().get(0).getTmp().getMax());
 
+
         for (int i = 0; i < my.getDaily_forecast().size(); i++) {
             if (i == 1) {
                 day_1_date.setText(my.getDaily_forecast().get(i).getDate());
-                day_1_cond.setText(my.getDaily_forecast().get(i).getCond().getTxt_d());
+                // day_1_cond.setText(my.getDaily_forecast().get(i).getCond().getTxt_d());
+                weatherImg.myVolley(my.getDaily_forecast().get(i).getCond().getCode_d(), day_1_cond);
                 day_1_tmp_max.setText(my.getDaily_forecast().get(i).getTmp().getMin());
                 day_1_tmp_min.setText(my.getDaily_forecast().get(i).getTmp().getMax());
             }
             if (i == 2) {
                 day_2_date.setText(my.getDaily_forecast().get(i).getDate());
-                day_2_cond.setText(my.getDaily_forecast().get(i).getCond().getTxt_d());
+                weatherImg.myVolley(my.getDaily_forecast().get(i).getCond().getCode_d(), day_2_cond);
                 day_2_tmp_max.setText(my.getDaily_forecast().get(i).getTmp().getMin());
                 day_2_tmp_min.setText(my.getDaily_forecast().get(i).getTmp().getMax());
             }
             if (i == 3) {
                 day_3_date.setText(my.getDaily_forecast().get(i).getDate());
-                day_3_cond.setText(my.getDaily_forecast().get(i).getCond().getTxt_d());
+                weatherImg.myVolley(my.getDaily_forecast().get(i).getCond().getCode_d(), day_3_cond);
                 day_3_tmp_max.setText(my.getDaily_forecast().get(i).getTmp().getMin());
                 day_3_tmp_min.setText(my.getDaily_forecast().get(i).getTmp().getMax());
             }
             if (i == 4) {
                 day_4_date.setText(my.getDaily_forecast().get(i).getDate());
-                day_4_cond.setText(my.getDaily_forecast().get(i).getCond().getTxt_d());
+                weatherImg.myVolley(my.getDaily_forecast().get(i).getCond().getCode_d(), day_4_cond);
                 day_4_tmp_max.setText(my.getDaily_forecast().get(i).getTmp().getMin());
                 day_4_tmp_min.setText(my.getDaily_forecast().get(i).getTmp().getMax());
             }

@@ -1,8 +1,9 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'//butterknife增加这一句
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    buildToolsVersion "24.0.3"
     defaultConfig {
         applicationId "com.guofeng.weather"
         minSdkVersion 15
@@ -26,10 +27,12 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:24.2.1'
     testCompile 'junit:junit:4.12'
-    compile files('libs/YoumiSdk_v6.3.0_2016-09-08.jar')
     compile 'com.android.support:support-v4:24.2.1'
-    compile files('libs/gson-2.7.jar')
     compile 'com.android.support:design:24.2.1'
     compile files('libs/volley-2015.07.28.jar')
     compile files('libs/AMap_Location_V3.0.0_20160922.jar')
+    compile files('libs/systembartint-1.0.4.jar')
+    compile 'com.google.code.gson:gson:2.7'
+    compile 'com.jakewharton:butterknife:8.4.0'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'//butterknife增加这一句
 }

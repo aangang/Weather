@@ -1,304 +1,203 @@
 package com.guofeng.weather.fragment;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
 import com.guofeng.weather.R;
-import com.guofeng.weather.base.C;
-import com.guofeng.weather.model.City;
-import com.guofeng.weather.model.WeatherInfo;
-import com.guofeng.weather.util.ACache;
+import com.guofeng.weather.adapter.WeatherAdapter;
+import com.guofeng.weather.base.BaseFragment;
+import com.guofeng.weather.model.ChangeCityEvent;
+import com.guofeng.weather.model.Weather;
 import com.guofeng.weather.util.AMapLocationUtil;
+import com.guofeng.weather.util.RetrofitSingleton;
+import com.guofeng.weather.util.RxBus;
 import com.guofeng.weather.util.SharedPreferenceUtil;
 import com.guofeng.weather.util.ToastUtil;
-import com.guofeng.weather.util.net.HttpCallback;
-import com.guofeng.weather.util.net.HttpUtil;
-import com.guofeng.weather.util.net.Utility;
-import com.guofeng.weather.util.net.VolleyUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
+ * 主页面fragment
  * Created by GUOFENG on 2016/10/22.
  */
-public class MainFragment extends Fragment {
+public class MainFragment extends BaseFragment {
 
+    @BindView(R.id.mySwipeRefreshLayout)
+    SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.myRecyclerView)
+    RecyclerView recyclerView;
+
+    private static Weather mWeather = new Weather();
+    private WeatherAdapter mWeatherAdapter;
+    private Unbinder unbinder;
     private View view;
-    //ASimpleCache 是一个为android制定的轻量级的开源缓存框架
-    private ACache aCache;
-    private AMapLocationUtil gaode = new AMapLocationUtil();
-    public static final int REQUEST_CODE = 1;
-    private City mCurrentCity = new City();//当前显示的城市对象
-    private VolleyUtil weatherImg = new VolleyUtil();
-    private WeatherInfo bean;
+    String TAG = "MainFragment";
 
-    @BindView(R.id.button_changeCity)
-    Button mChangeCityButton;//改变城市按钮
-    @BindView(R.id.button_refresh)
-    Button mRefreshButton;//刷新按钮
-    @BindView(R.id.textView_city_name)
-    TextView mCityName;//城市名称
-    @BindView(R.id.textView_publishTime)
-    TextView mUpdateTime;//更新时间
-    @BindView(R.id.textView_weather_desp)
-    TextView mWeatherDesp;//具体的天气情况
-    @BindView(R.id.textView_weather_city_qlty)
-    TextView city_qlty;//空气质量
-    @BindView(R.id.now_tmp)
-    TextView now_tmp;//当前温度
+    /**
+     * 懒加载数据操作,在视图创建之前初始化
+     */
+    @Override
+    protected void lazyLoad() {
+        Log.e(TAG, "lazyLoad");
+        AMapLocationUtil.getDefault().startAMap();
+        Load();
 
-    @BindView(R.id.day_1_date)
-    TextView day_1_date;
-    @BindView(R.id.day_1_cond)
-    ImageView day_1_cond;
-    @BindView(R.id.day_1_tmp_min)
-    TextView day_1_tmp_min;
-    @BindView(R.id.day_1_tmp_max)
-    TextView day_1_tmp_max;
+    }
 
-    @BindView(R.id.day_2_date)
-    TextView day_2_date;
-    @BindView(R.id.day_2_cond)
-    ImageView day_2_cond;
-    @BindView(R.id.day_2_tmp_min)
-    TextView day_2_tmp_min;
-    @BindView(R.id.day_2_tmp_max)
-    TextView day_2_tmp_max;
 
-    @BindView(R.id.day_3_date)
-    TextView day_3_date;
-    @BindView(R.id.day_3_cond)
-    ImageView day_3_cond;
-    @BindView(R.id.day_3_tmp_min)
-    TextView day_3_tmp_min;
-    @BindView(R.id.day_3_tmp_max)
-    TextView day_3_tmp_max;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.e(TAG, "onCreate");
+        RxBus.getDefault().toObserverable(ChangeCityEvent.class)
+                .onBackpressureBuffer()
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<ChangeCityEvent>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.e("MainFragment onCreate", "onCompleted!");
+                    }
 
-    @BindView(R.id.day_4_date)
-    TextView day_4_date;
-    @BindView(R.id.day_4_cond)
-    ImageView day_4_cond;
-    @BindView(R.id.day_4_tmp_min)
-    TextView day_4_tmp_min;
-    @BindView(R.id.day_4_tmp_max)
-    TextView day_4_tmp_max;
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("MainFragment onCreate", e.toString());
+                    }
 
-    ScrollView myScroll;
-    SwipeRefreshLayout mySwipeRefresh;
-    TextView tv_refresh;
+                    @Override
+                    public void onNext(ChangeCityEvent changeCityEvent) {
+                        Log.e("MainFragment onCreate", "onNext!");
+                        if (swipeRefreshLayout != null) {
+                            swipeRefreshLayout.setRefreshing(true);
+                            Load();
+                        }
+                    }
+                });
+    }
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.e(TAG, "onCreateView");
         if (view == null) {
             view = inflater.inflate(R.layout.fragment_main, container, false);
-            ButterKnife.bind(this, view);
+            unbinder = ButterKnife.bind(this, view);
         }
+        isCreateVew = true;
         return view;
     }
-
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        btnClickListener();//按钮点击事件
-        readyFristData();//准备首次的数据
-    }
+        Log.e(TAG, "onViewCreated");
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeResources(
+                    android.R.color.holo_purple,
+                    android.R.color.holo_blue_bright,
+                    android.R.color.holo_orange_light,
+                    android.R.color.holo_red_light
 
-
-    private void btnClickListener() {
-        //刷新按钮
-        mRefreshButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateWeatherFromServer();//从服务器更新
-            }
-        });
-    }
-
-    private void readyFristData() {
-        gaode.start();
-        aCache = ACache.get(getActivity());
-
-        //首次安装，判断本地存储有无数据，默认从服务器获取北京数据
-        if (aCache.getAsObject("tmpWeatherInfo") == null) {
-            Log.e("FFF", "从服务器获取数据！");
-            updateWeatherFromServer();
-        } else {
-            //从本地取数据，也就是上次访问的城市，先确定这个
-            bean = (WeatherInfo) aCache.getAsObject("tmpWeatherInfo");
-            Log.e("FFF", "从本地获取数据！");
-
-            if (bean.getHeWeatherdataservice().get(0).getStatus().equals("ok")) {
-                try {
-                    loadWeatherData();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                //ToastUtil.showLongToast("今日API已经用尽调用次数！");
-                updateWeatherFromServer();
-            }
-
-        }
-
-    }
-
-    //刷新各组件数据的封装
-    private void loadWeatherData() throws Exception {
-
-        bean = (WeatherInfo) aCache.getAsObject("tmpWeatherInfo");
-        WeatherInfo.HeWeatherdataserviceBean my
-                = bean.getHeWeatherdataservice().get(0);
-
-        mCurrentCity.setCity_name(my.getBasic().getCity());
-        mCurrentCity.setCity_code(my.getBasic().getId());
-
-        mCityName.setText(my.getBasic().getCity());
-        mUpdateTime.setText(my.getBasic().getUpdate().getLoc());
-        city_qlty.setText(my.getAqi().getCity().getQlty());
-        now_tmp.setText(my.getNow().getTmp() + "°");
-        if (my.getDaily_forecast().get(0).getCond().getTxt_d()
-                .equals(my.getDaily_forecast().get(0).getCond().getTxt_n())) {
-            mWeatherDesp.setText(my.getDaily_forecast().get(0).getCond().getTxt_d());
-        } else {
-            mWeatherDesp.setText(my.getDaily_forecast().get(0).getCond().getTxt_d() + "转"
-                    + my.getDaily_forecast().get(0).getCond().getTxt_n());
-        }
-        day_1_tmp_min.setText(my.getDaily_forecast().get(0).getTmp().getMin());
-        day_1_tmp_max.setText(my.getDaily_forecast().get(0).getTmp().getMax());
-
-
-        for (int i = 0; i < my.getDaily_forecast().size(); i++) {
-            if (i == 1) {
-                day_1_date.setText(my.getDaily_forecast().get(i).getDate());
-                // day_1_cond.setText(my.getDaily_forecast().get(i).getCond().getTxt_d());
-                weatherImg.myVolley(my.getDaily_forecast().get(i).getCond().getCode_d(), day_1_cond);
-                day_1_tmp_max.setText(my.getDaily_forecast().get(i).getTmp().getMin());
-                day_1_tmp_min.setText(my.getDaily_forecast().get(i).getTmp().getMax());
-            }
-            if (i == 2) {
-                day_2_date.setText(my.getDaily_forecast().get(i).getDate());
-                weatherImg.myVolley(my.getDaily_forecast().get(i).getCond().getCode_d(), day_2_cond);
-                day_2_tmp_max.setText(my.getDaily_forecast().get(i).getTmp().getMin());
-                day_2_tmp_min.setText(my.getDaily_forecast().get(i).getTmp().getMax());
-            }
-            if (i == 3) {
-                day_3_date.setText(my.getDaily_forecast().get(i).getDate());
-                weatherImg.myVolley(my.getDaily_forecast().get(i).getCond().getCode_d(), day_3_cond);
-                day_3_tmp_max.setText(my.getDaily_forecast().get(i).getTmp().getMin());
-                day_3_tmp_min.setText(my.getDaily_forecast().get(i).getTmp().getMax());
-            }
-            if (i == 4) {
-                day_4_date.setText(my.getDaily_forecast().get(i).getDate());
-                weatherImg.myVolley(my.getDaily_forecast().get(i).getCond().getCode_d(), day_4_cond);
-                day_4_tmp_max.setText(my.getDaily_forecast().get(i).getTmp().getMin());
-                day_4_tmp_min.setText(my.getDaily_forecast().get(i).getTmp().getMax());
-            }
-        }
-
-    }
-
-
-    //从服务器更新数据（CityChooseActivity中有相似方法）
-    private void updateWeatherFromServer() {
-        String address = "https://api.heweather.com/x3/weather?cityid="
-                + SharedPreferenceUtil.getInstance().getCityID()
-                + "&key=" + C.HEFENG_KEY;
-
-        ToastUtil.showShortToast("正在更新信息");
-
-        HttpUtil.sendHttpRequest(address, new HttpCallback() {
-            @Override
-            public void onFinish(final StringBuilder response) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if (Utility.handleWeatherResponse(response, aCache)) {
-//                            try {
-//                                loadWeatherData();
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//                            ToastUtil.showShortToast("更新天气完毕");
-//
-//                        }
-//                    }
-//                });
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (Utility.handleWeatherResponse(response, aCache)) {
-                            myHandler.sendEmptyMessage(1);
+            );
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    swipeRefreshLayout.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Load();
                         }
-                    }
-                }).start();
-            }
+                    }, 1000);
+                }
+            });
+        }
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mWeatherAdapter = new WeatherAdapter(mWeather);
+        recyclerView.setAdapter(mWeatherAdapter);
 
-            @Override
-            public void onError(final Exception e) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        ToastUtil.showShortToast("更新天气出错" + e.getMessage());
-//
-//                    }
-//                });
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        myHandler.sendEmptyMessage(2);
-
-                    }
-                }).start();
-            }
-        });
     }
 
-
-    Handler myHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    try {
-                        loadWeatherData();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case 2:
-                    ToastUtil.showShortToast("更新天气出错");
-                    break;
+    private void Load() {
+        fetchDataByNetWork().doOnRequest(new Action1<Long>() {
+            @Override
+            public void call(Long aLong) {
+                swipeRefreshLayout.setRefreshing(true);
             }
-        }
-    };
+        }).doOnError(new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                recyclerView.setVisibility(View.GONE);
+                SharedPreferenceUtil.getInstance().setCityName("北京");
+            }
+        }).doOnNext(new Action1<Weather>() {
+            @Override
+            public void call(Weather weather) {
+                recyclerView.setVisibility(View.VISIBLE);
+            }
+        }).doOnTerminate(new Action0() {
+            @Override
+            public void call() {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }).subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<Weather>() {
+                    @Override
+                    public void onCompleted() {
+                        ToastUtil.showShortToast("加载完毕");
+                    }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == REQUEST_CODE) {
-//            if (resultCode == RESULT_OK) {
-//                try {
-//                    loadWeatherData();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//    }
+                    @Override
+                    public void onError(Throwable e) {
+                        ToastUtil.showShortToast(e.toString());
+
+                    }
+
+                    @Override
+                    public void onNext(Weather weather) {
+                        mWeather.status = weather.status;
+                        mWeather.aqi = weather.aqi;
+                        mWeather.basic = weather.basic;
+                        mWeather.suggestion = weather.suggestion;
+                        mWeather.now = weather.now;
+                        mWeather.dailyForecast = weather.dailyForecast;
+                        mWeather.hourlyForecast = weather.hourlyForecast;
+                        setFragmentTitle(weather.basic.city);
+                        mWeatherAdapter.notifyDataSetChanged();
+                        //normalStyleNotification(weather);
+                    }
+                });
+    }
+
+    /**
+     * 从网络获取
+     */
+    private Observable<Weather> fetchDataByNetWork() {
+        String cityName = SharedPreferenceUtil.getInstance().getCityName();
+        return RetrofitSingleton.getInstance().
+                fetchWeather(cityName).compose(this.<Weather>bindToLifecycle());
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.e(TAG, "onDestroyView");
+        unbinder.unbind();
+    }
 
 }

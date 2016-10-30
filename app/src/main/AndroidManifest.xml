@@ -2,27 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.guofeng.weather">
 
-    <!-- 配置权限 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <!-- 以下为可选权限 -->
-    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
-
-    <!--用于进行网络定位-->
+    <!-- 用于进行网络定位 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!--用于访问GPS定位-->
+    <!-- 用于访问GPS定位 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!--获取运营商信息，用于支持提供运营商信息相关的接口-->
+    <!-- 获取运营商信息，用于支持提供运营商信息相关的接口 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!--用于访问wifi网络信息，wifi信息会用于进行网络定位-->
+    <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <!--这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
+    <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <!--用于访问网络，网络定位需要上网-->
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <!--用于读取手机当前的状态-->
+    <!-- 用于访问网络，网络定位需要上网 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 用于读取手机当前的状态 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <!--写入扩展存储，向扩展卡写入数据，用于写入缓存定位数据-->
+    <!-- 写入扩展存储，向扩展卡写入数据，用于写入缓存定位数据 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
@@ -33,61 +27,49 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
 
-        <!--高德地图定位，申请自己的Key-->
+        <!-- 高德地图定位，申请自己的Key -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="d698e7fd572fb816309429a3f3430db4"></meta-data>
-        <service android:name="com.amap.api.location.APSService"></service>
+            android:value="d698e7fd572fb816309429a3f3430db4" />
+        <service android:name="com.amap.api.location.APSService" />
 
+        <!-- 闪屏页 -->
         <activity
-            android:name="com.guofeng.weather.activity.SplashActivity"
-            android:configChanges="keyboard|keyboardHidden|screenSize|orientation"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:name=".activity.SplashActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
+        <!-- 新主界面 -->
         <activity
-            android:name="com.guofeng.weather.activity.WeatherActivity"
-            android:label="@string/app_name">
+            android:name=".activity.MainActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:launchMode="singleTask"></activity>
 
+        <!-- 主界面
+        <activity
+            android:name=".activity.WeatherActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:label="@string/app_name"
+            android:launchMode="singleTask">
+        </activity>-->
+
+        <activity android:name=".activity.CityManageActivity">
         </activity>
 
-        <activity
-            android:name=".activity.CityChooseActivity"
-            android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="com.guofeng.app.myweather.CityChooseActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+        <activity android:name=".activity.CityChooseActivity">
         </activity>
 
-        <service android:name="com.guofeng.weather.service.AutoUpdateService" />
-        <receiver android:name="com.guofeng.weather.receiver.AutoUpdateReceiver" />
 
-        <!-- 其他组件 -->
-        <activity
-            android:name="net.youmi.android.AdBrowser"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.NoTitleBar" />
+        <service android:name=".service.AutoUpdateService" />
+        <receiver android:name=".receiver.AutoUpdateReceiver" />
 
-        <service
-            android:name="net.youmi.android.AdService"
-            android:exported="false" />
-
-        <receiver android:name="net.youmi.android.AdReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_ADDED" />
-                <action android:name="android.intent.action.PACKAGE_INSTALL" />
-
-                <data android:scheme="package" />
-            </intent-filter>
-        </receiver>
 
     </application>
+
 </manifest>

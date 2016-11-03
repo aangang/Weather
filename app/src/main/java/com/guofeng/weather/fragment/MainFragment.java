@@ -32,7 +32,12 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
- * 主页面fragment
+ * 主页面 fragment
+ * <p>
+ * 1.默认定位后加载天气
+ * 2.城市改变后加载天气
+ * 3.下拉刷新后加载天气
+ * <p>
  * Created by GUOFENG on 2016/10/22.
  */
 public class MainFragment extends BaseFragment {
@@ -49,17 +54,20 @@ public class MainFragment extends BaseFragment {
     String TAG = "MainFragment";
 
     /**
-     * 懒加载数据操作,在视图创建之前初始化
+     * 懒加载数据操作, 切换fragment时，可见并且 isCreateVew = true 才去初始化定位，网络加载天气信息。
      */
     @Override
     protected void lazyLoad() {
         Log.e(TAG, "lazyLoad");
+
         AMapLocationUtil.getDefault().startAMap();
         Load();
-
     }
 
 
+    /**
+     * 城市改变后加载天气
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +111,9 @@ public class MainFragment extends BaseFragment {
         return view;
     }
 
+    /**
+     * 下拉刷新后加载天气
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -123,7 +134,7 @@ public class MainFragment extends BaseFragment {
                         public void run() {
                             Load();
                         }
-                    }, 1000);
+                    }, 0);
                 }
             });
         }
@@ -133,17 +144,19 @@ public class MainFragment extends BaseFragment {
 
     }
 
+    /**
+     * 网络加载天气数据
+     */
     private void Load() {
         fetchDataByNetWork().doOnRequest(new Action1<Long>() {
             @Override
             public void call(Long aLong) {
-                swipeRefreshLayout.setRefreshing(true);
+                //swipeRefreshLayout.setRefreshing(true);
             }
         }).doOnError(new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {
                 recyclerView.setVisibility(View.GONE);
-                SharedPreferenceUtil.getInstance().setCityName("北京");
             }
         }).doOnNext(new Action1<Weather>() {
             @Override
@@ -155,11 +168,11 @@ public class MainFragment extends BaseFragment {
             public void call() {
                 swipeRefreshLayout.setRefreshing(false);
             }
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.computation())
                 .subscribe(new Subscriber<Weather>() {
                     @Override
                     public void onCompleted() {
-                        ToastUtil.showShortToast("加载完毕");
+                        ToastUtil.showShortToast("加载天气完毕");
                     }
 
                     @Override
@@ -170,14 +183,14 @@ public class MainFragment extends BaseFragment {
 
                     @Override
                     public void onNext(Weather weather) {
-                        mWeather.status = weather.status;
-                        mWeather.aqi = weather.aqi;
-                        mWeather.basic = weather.basic;
-                        mWeather.suggestion = weather.suggestion;
-                        mWeather.now = weather.now;
-                        mWeather.dailyForecast = weather.dailyForecast;
-                        mWeather.hourlyForecast = weather.hourlyForecast;
                         setFragmentTitle(weather.basic.city);
+                        mWeather.status = weather.status;
+                        mWeather.basic = weather.basic;
+                        mWeather.aqi = weather.aqi;
+                        mWeather.now = weather.now;
+                        mWeather.suggestion = weather.suggestion;
+                        mWeather.hourlyForecast = weather.hourlyForecast;
+                        mWeather.dailyForecast = weather.dailyForecast;
                         mWeatherAdapter.notifyDataSetChanged();
                         //normalStyleNotification(weather);
                     }

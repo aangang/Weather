@@ -41,15 +41,19 @@ public class AMapLocationUtil {
         public void onLocationChanged(AMapLocation aMapLocation) {
             if (aMapLocation != null) {
                 if (aMapLocation.getErrorCode() == 0) {
-                    String mCity= Util.replaceCity(aMapLocation.getCity());
-                    ToastUtil.showShortToast("您所在位置：" + mCity);
-                    SharedPreferenceUtil.getInstance().setCityName(mCity);
+                    String mCity = MyUtil.replaceCity(aMapLocation.getCity());
+                    if (mCity.equals(""))
+                        ToastUtil.showShortToast("定位出错，请手动选择所在地~");
+                    else {
+                        ToastUtil.showShortToast("您所在位置：" + mCity);
+                        SharedPreferenceUtil.getInstance().setCityName(mCity);
+                    }
                     stopAMap();
                 } else {
                     //定位失败时，可通过ErrCode错误码来确定失败的原因，errInfo是错误信息。
-                    Log.e("高德定位错误", "location Error, ErrCode:"
-                            + aMapLocation.getErrorCode() + ", errInfo:"
-                            + aMapLocation.getErrorInfo());
+                    Log.e("定位错误",
+                            "ErrCode:" + aMapLocation.getErrorCode()
+                            + ", ErrInfo:" + aMapLocation.getErrorInfo());
                     ToastUtil.showShortToast(aMapLocation.getErrorInfo());
                 }
             }

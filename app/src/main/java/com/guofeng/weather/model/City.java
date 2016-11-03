@@ -1,33 +1,13 @@
 package com.guofeng.weather.model;
 
+import java.io.Serializable;
 
-public class City {
+/**
+ * Created by GUOFENG on 2016/11/2.
+ */
 
-    private int Id;
-    private String city_name;
-    private String city_code;
-
-    public int getId() {
-        return Id;
-    }
-
-    public void setId(int id) {
-        Id = id;
-    }
-
-    public String getCity_name() {
-        return city_name;
-    }
-
-    public void setCity_name(String city_name) {
-        this.city_name = city_name;
-    }
-
-    public String getCity_code() {
-        return city_code;
-    }
-
-    public void setCity_code(String city_code) {
-        this.city_code = city_code;
-    }
+public class City implements Serializable {
+    public String CityName;
+    public int CitySort;
+    public int ProvinceID;
 }

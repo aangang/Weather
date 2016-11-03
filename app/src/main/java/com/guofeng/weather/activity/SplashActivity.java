@@ -12,8 +12,6 @@ import java.lang.ref.WeakReference;
  * 闪屏页：展现标识、数据加载、检查更新
  */
 public class SplashActivity extends Activity {
-    //返回源代码中给出的底层类的简称
-    private static final String TAG = SplashActivity.class.getSimpleName();
     //获得主线程的Looper实例，activity
     private SwitchHandler mHandler = new SwitchHandler(Looper.getMainLooper(), this);
 
@@ -28,9 +26,9 @@ public class SplashActivity extends Activity {
     class SwitchHandler extends Handler {
 
         private WeakReference<SplashActivity> mWeakReference;
-        public SwitchHandler(Looper mLooper, SplashActivity activity) {
+        SwitchHandler(Looper mLooper, SplashActivity activity) {
             super(mLooper);
-            mWeakReference = new WeakReference<SplashActivity>(activity);
+            mWeakReference = new WeakReference<>(activity);
         }
 
         @Override

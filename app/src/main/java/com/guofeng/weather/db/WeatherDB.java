@@ -1,110 +1,67 @@
 package com.guofeng.weather.db;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
-import com.guofeng.weather.model.City;
+import com.guofeng.weather.R;
+import com.guofeng.weather.base.BaseApplication;
 import com.guofeng.weather.base.C;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 
 public class WeatherDB {
 
     private static WeatherDB weatherDB;//单例对象
     private SQLiteDatabase mSQLiteDatabase; //数据库处理对象
+    private String DBFileUrl = C.DB_PATH + "/" + C.DB_NAME;
+    private String TAG = "WeatherDB";
 
-    private WeatherDB(Context context) {
-        //创建一个WeatherOpenHelper对象
-        WeatherOpenHelper weatherOpenHelper =
-                new WeatherOpenHelper(context, C.DB_NAME, null, C.DB_VERSION);
-        //获取SQLiteDatabase对象，通过该对象可以对数据库进行读写操作；
-        mSQLiteDatabase = weatherOpenHelper.getWritableDatabase();
+    public static WeatherDB getInstance() {
+        return WeatherDBHolder.sInstance;
     }
 
-    //来个单例
-    public static WeatherDB getInstance(Context context) {
-        if (weatherDB == null) {
-            weatherDB = new WeatherDB(context);
+    private static final class WeatherDBHolder {
+        public static final WeatherDB sInstance = new WeatherDB();
+    }
+
+    /**
+     * 打开数据库
+     */
+    public void openDatabase() {
+        Log.e(TAG, "打开数据库");
+        if (!(new File(DBFileUrl).exists())) { //不存在我的SQLite数据库文件
+            //寻找我的db文件，然后复制到手机
+            InputStream is = BaseApplication.getMyAppContext().getResources().openRawResource(R.raw.china_city);
+            FileOutputStream fos;
+            try {
+                fos = new FileOutputStream(DBFileUrl);
+                byte[] buffer = new byte[400000];
+                int count;
+                while ((count = is.read(buffer)) > 0) {
+                    fos.write(buffer, 0, count);
+                }
+                is.close();
+                fos.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        return weatherDB;
+        this.mSQLiteDatabase = SQLiteDatabase.openOrCreateDatabase(DBFileUrl, null);
     }
-    //------------------------------------------------------------------
 
-    //插入一个城市对象的数据
-    public void saveCity(City city) {
-        if (city != null) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put("CITY_NAME", city.getCity_name());
-            contentValues.put("CITY_CODE", city.getCity_code());
-            mSQLiteDatabase.insert("CITY", null, contentValues);
+    public SQLiteDatabase getDatabase() {
+        return mSQLiteDatabase;
+    }
+
+    public void closeDatabase() {
+        if (this.mSQLiteDatabase != null) {
+            this.mSQLiteDatabase.close();
         }
-    }
-
-    //根据名称获取某一个或多个匹配的城市
-    public List<City> loadCitiesByName(String name) {
-        List<City> cities = new ArrayList<>();
-        Cursor cursor = mSQLiteDatabase.query(
-                "CITY",
-                null,
-                "CITY_NAME like ?",
-                new String[]{name + "%"},
-                null,
-                null,
-                "CITY_CODE"
-        );
-        while (cursor.moveToNext()) {
-            City city = new City();
-            city.setId(cursor.getInt(cursor.getColumnIndex("ID")));
-            city.setCity_name(cursor.getString(cursor.getColumnIndex("CITY_NAME")));
-            city.setCity_code(cursor.getString(cursor.getColumnIndex("CITY_CODE")));
-            cities.add(city);
-        }
-        if (cursor != null)
-            cursor.close();
-        return cities;
-    }
-
-    //检查是否首次安装（0-是 , 1-否）
-    public int checkDataState() {
-        int data_state = -1;
-        Cursor cursor = mSQLiteDatabase.query("data_state", null, null, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            do {
-                data_state = cursor.getInt(cursor.getColumnIndex("STATE"));
-            } while (cursor.moveToNext());
-        }
-        if (cursor != null)
-            cursor.close();
-        return data_state;
-    }
-
-    //更新状态为已有数据
-    public void updateDataState() {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("state", 1);
-        mSQLiteDatabase.update("data_state", contentValues, null, null);
-    }
-
-    //获取所有的城市
-    public List<City> loadCities() {
-        List<City> cities = new ArrayList<>();
-        Cursor cursor = mSQLiteDatabase.query("CITY", null, null, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            do {
-                City city = new City();
-                city.setId(cursor.getInt(cursor.getColumnIndex("ID")));
-                city.setCity_name(cursor.getString(cursor.getColumnIndex("CITY_NAME")));
-                city.setCity_code(cursor.getString(cursor.getColumnIndex("CITY_CODE")));
-                cities.add(city);
-            } while (cursor.moveToNext());
-        }
-        if (cursor != null)
-            cursor.close();
-        return cities;
     }
 
 

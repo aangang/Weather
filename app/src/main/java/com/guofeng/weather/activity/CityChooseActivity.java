@@ -1,5 +1,6 @@
 package com.guofeng.weather.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,12 +11,9 @@ import com.guofeng.weather.R;
 import com.guofeng.weather.adapter.CityAdapter;
 import com.guofeng.weather.db.WeatherDB;
 import com.guofeng.weather.db.WeatherDBHelper;
-import com.guofeng.weather.model.ChangeCityEvent;
 import com.guofeng.weather.model.City;
 import com.guofeng.weather.model.Province;
 import com.guofeng.weather.util.MyUtil;
-import com.guofeng.weather.util.RxBus;
-import com.guofeng.weather.util.SharedPreferenceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,8 +99,13 @@ public class CityChooseActivity extends ToolbarActivity {
                     queryCities();
                 } else if (Level == LEVEL_CITY) {
                     String city = MyUtil.replaceCity(cityList.get(position).CityName);
-                    SharedPreferenceUtil.getInstance().setCityName(city);
-                    RxBus.getDefault().post(new ChangeCityEvent());//发送
+
+                    //SharedPreferenceUtil.getInstance().setCityName(city);
+                    //RxBus.getDefault().post(new ChangeCityEvent());//发送
+
+                    Intent intent = new Intent();
+                    intent.putExtra("CHOOSE_CITY", city);
+                    setResult(RESULT_OK, intent);
                     finish();
                 }
             }

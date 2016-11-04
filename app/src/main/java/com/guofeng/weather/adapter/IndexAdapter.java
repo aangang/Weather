@@ -2,7 +2,8 @@ package com.guofeng.weather.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,24 +12,24 @@ import java.util.List;
  * Created by GUOFENG on 2016/10/22.
  */
 
-public class IndexAdapter extends FragmentPagerAdapter {
+public class IndexAdapter extends FragmentStatePagerAdapter {
 
     private List<Fragment> fragments = new ArrayList<>();
     private List<String> titles = new ArrayList<>();
-//    private TabLayout mTabLayout;
 
     public IndexAdapter(FragmentManager fm) {
         super(fm);
     }
 
-//    public IndexAdapter(FragmentManager fm, TabLayout tabLayout) {
-//        super(fm);
-//        mTabLayout = tabLayout;
-//    }
-
     public void addTab(Fragment fragment, String title) {
         fragments.add(fragment);
         titles.add(title);
+        notifyDataSetChanged();
+    }
+
+    public void removeTab(Fragment fragment) {
+        fragments.remove(fragment);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -39,6 +40,11 @@ public class IndexAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return fragments.size();
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return PagerAdapter.POSITION_NONE;
     }
 
     @Override

@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 
 import com.guofeng.weather.base.BaseApplication;
 
+import java.util.ArrayList;
+
 /**
  * 设置SP相关
  */
@@ -28,6 +30,8 @@ public class SharedPreferenceUtil {
     private SharedPreferenceUtil() {
         mySP = BaseApplication.getMyAppContext().getSharedPreferences("MySetting", Context.MODE_PRIVATE);
     }
+
+    //----------------------------------------------------------
 
     public SharedPreferenceUtil putInt(String key, int value) {
         mySP.edit().putInt(key, value).apply();
@@ -92,14 +96,23 @@ public class SharedPreferenceUtil {
         return mySP.getString(CITY_NAME, "北京");
     }
 
-    //当前城市ID
-    public void setCityId(String is) {
-        mySP.edit().putString(CITY_ID, is).apply();
+    public boolean saveArray(ArrayList<String> arr) {
+        mySP.edit().putInt("Status_size", arr.size()).apply(); /*sKey is an array*/
+
+        for (int i = 0; i < arr.size(); i++) {
+            mySP.edit().remove("Status_" + i).apply();
+            mySP.edit().putString("Status_" + i, arr.get(i)).apply();
+        }
+        return mySP.edit().commit();
     }
 
-    public String getCityID() {
-        return mySP.getString(CITY_ID, "CN101010100");
+    public ArrayList<String> getArray() {
+        ArrayList<String> arr = new ArrayList<>();
+        int size = mySP.getInt("Status_size", 0);
+        for (int i = 0; i < size; i++) {
+            arr.add(mySP.getString("Status_" + i, null));
+
+        }
+        return arr;
     }
-
-
 }

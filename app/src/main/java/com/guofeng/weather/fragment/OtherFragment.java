@@ -13,12 +13,8 @@ import android.view.ViewGroup;
 import com.guofeng.weather.R;
 import com.guofeng.weather.adapter.WeatherAdapter;
 import com.guofeng.weather.base.BaseFragment;
-import com.guofeng.weather.model.ChangeCityEvent;
 import com.guofeng.weather.model.Weather;
-import com.guofeng.weather.util.AMapLocationUtil;
 import com.guofeng.weather.util.RetrofitSingleton;
-import com.guofeng.weather.util.RxBus;
-import com.guofeng.weather.util.SharedPreferenceUtil;
 import com.guofeng.weather.util.ToastUtil;
 
 import butterknife.BindView;
@@ -26,21 +22,15 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
- * 主页面 fragment
- * <p>
- * 1.默认定位后加载天气
- * 2.城市改变后加载天气
- * 3.下拉刷新后加载天气
- * <p>
- * Created by GUOFENG on 2016/10/22.
+ * Created by GUOFENG on 2016/11/4.
  */
-public class MainFragment extends BaseFragment {
+
+public class OtherFragment extends BaseFragment {
 
     @BindView(R.id.mySwipeRefreshLayout)
     SwipeRefreshLayout swipeRefreshLayout;
@@ -52,52 +42,16 @@ public class MainFragment extends BaseFragment {
     private Unbinder unbinder;
     private View view;
     String TAG = "MainFragment";
+    String city = null;
 
     /**
-     * 懒加载数据操作, 切换fragment时，可见并且 isCreateVew = true 才去初始化定位，网络加载天气信息。
+     * 懒加载数据操作, 切换fragment时，可见并且 isCreateVew = true 才去网络加载天气信息。
      */
     @Override
     protected void lazyLoad() {
         Log.e(TAG, "lazyLoad");
-
-        AMapLocationUtil.getDefault().startAMap();
         Load();
     }
-
-
-    /**
-     * 城市改变后加载天气
-     */
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.e(TAG, "onCreate");
-        RxBus.getDefault().toObserverable(ChangeCityEvent.class)
-                .onBackpressureBuffer()
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<ChangeCityEvent>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.e("MainFragment onCreate", "onCompleted!");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e("MainFragment onCreate", e.toString());
-                    }
-
-                    @Override
-                    public void onNext(ChangeCityEvent changeCityEvent) {
-                        Log.e("MainFragment onCreate", "onNext!");
-                        if (swipeRefreshLayout != null) {
-                            swipeRefreshLayout.setRefreshing(true);
-                            Load();
-                        }
-                    }
-                });
-    }
-
 
     @Nullable
     @Override
@@ -107,6 +61,8 @@ public class MainFragment extends BaseFragment {
             view = inflater.inflate(R.layout.fragment_main, container, false);
             unbinder = ButterKnife.bind(this, view);
         }
+        Bundle bundle = getArguments();
+        city = bundle.getString("FRAGMENT_CITY");
         isCreateVew = true;
         return view;
     }
@@ -117,7 +73,6 @@ public class MainFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         //super.onViewCreated(view, savedInstanceState);
-
         Log.e(TAG, "onViewCreated");
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setColorSchemeResources(
@@ -202,9 +157,8 @@ public class MainFragment extends BaseFragment {
      * 从网络获取
      */
     private Observable<Weather> fetchDataByNetWork() {
-        String cityName = SharedPreferenceUtil.getInstance().getCityName();
         return RetrofitSingleton.getInstance().
-                fetchWeather(cityName).compose(this.<Weather>bindToLifecycle());
+                fetchWeather(city).compose(this.<Weather>bindToLifecycle());
     }
 
     @Override

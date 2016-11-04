@@ -7,48 +7,59 @@
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingBottom="16dp"
-    android:paddingEnd="10dp"
+    android:paddingEnd="8dp"
     android:paddingStart="16dp"
     android:paddingTop="16dp"
     tools:ignore="RtlCompat">
 
     <TextView
-        android:id="@+id/one_clock"
+        android:id="@+id/hour_clock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:drawablePadding="12dp"
-        android:drawableStart="@drawable/icon_time"
-        tools:text="16:00" />
+        android:drawablePadding="6dp"
+        android:drawableStart="@drawable/ic_time"
+        tools:text="00:00" />
 
     <TextView
-        android:id="@+id/one_temp"
+        android:id="@+id/hour_temp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:drawablePadding="8dp"
-        android:drawableStart="@drawable/icon_temp"
-        tools:text="12°" />
-
-
-    <TextView
-        android:id="@+id/one_humidity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:drawablePadding="8dp"
-        android:drawableStart="@drawable/icon_humidity"
-        tools:text="81%" />
+        android:drawablePadding="5dp"
+        android:drawableStart="@drawable/ic_temp"
+        tools:text="00°" />
 
 
     <TextView
-        android:id="@+id/one_wind"
+        android:id="@+id/hour_pop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:drawablePadding="12dp"
-        android:drawableStart="@drawable/icon_wind"
-        tools:text="14Km" />
+        android:drawablePadding="6dp"
+        android:drawableStart="@drawable/ic_pop"
+        tools:text="100%" />
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/hour_wind_sc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="6dp"
+            android:drawableStart="@drawable/ic_wind"
+            tools:text="3-4 级 " />
+
+        <TextView
+            android:id="@+id/hour_wind_dir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="西北风" />
+    </LinearLayout>
 
 
 </LinearLayout>

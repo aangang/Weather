@@ -26,7 +26,7 @@
         android:name=".base.BaseApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
-        android:icon="@mipmap/didaweather"
+        android:icon="@mipmap/ic_app"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
 

@@ -7,10 +7,10 @@
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
     card_view:cardCornerRadius="5dp"
-    card_view:cardElevation="3dp">
+    card_view:cardElevation="2dp">
 
     <LinearLayout
-        android:id="@+id/forecast_linear"
+        android:id="@+id/day_info_linearlayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical" />

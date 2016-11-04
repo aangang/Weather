@@ -22,6 +22,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import rx.Observable;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -124,7 +125,9 @@ public class OtherFragment extends BaseFragment {
             public void call() {
                 swipeRefreshLayout.setRefreshing(false);
             }
-        }).subscribeOn(Schedulers.computation())
+        }).subscribeOn(Schedulers.io())
+                .unsubscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Weather>() {
                     @Override
                     public void onCompleted() {

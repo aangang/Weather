@@ -74,7 +74,7 @@ public class MainFragment extends BaseFragment {
         Log.e(TAG, "onCreate");
         RxBus.getDefault().toObserverable(ChangeCityEvent.class)
                 .onBackpressureBuffer()
-                .subscribeOn(Schedulers.computation())
+                .unsubscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ChangeCityEvent>() {
                     @Override
@@ -169,7 +169,9 @@ public class MainFragment extends BaseFragment {
             public void call() {
                 swipeRefreshLayout.setRefreshing(false);
             }
-        }).subscribeOn(Schedulers.computation())
+        }).subscribeOn(Schedulers.io())
+                .unsubscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Weather>() {
                     @Override
                     public void onCompleted() {

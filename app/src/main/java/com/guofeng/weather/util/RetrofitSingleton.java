@@ -117,6 +117,7 @@ public class RetrofitSingleton {
     public Observable<Weather> fetchWeather(final String city) {
         return apiService.mWeatherAPI(city, C.HEFENG_KEY)
                 .subscribeOn(Schedulers.io())
+                .unsubscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(new Func1<WeatherAPI, Observable<WeatherAPI>>() {
                     @Override

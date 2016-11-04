@@ -13,7 +13,6 @@ import java.util.Calendar;
  */
 public class MyUtil {
 
-
     /**
      * 匹配掉定位城市名称的无用后缀
      */
@@ -42,18 +41,14 @@ public class MyUtil {
 
     /**
      * 判断当前日期是星期几
-     *
-     * @param pTime 修要判断的时间
-     * @return dayForWeek 判断结果
-     * @Exception 发生异常
      */
-    public static String dayForWeek(String pTime) throws Exception {
+    public static String dayForWeek(String time) throws Exception {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar c = Calendar.getInstance();
-        c.setTime(format.parse(pTime));
-        int dayForWeek = 0;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(format.parse(time));
+        //int dayForWeek = 0;
         String week = "";
-        dayForWeek = c.get(Calendar.DAY_OF_WEEK);
+        int dayForWeek = calendar.get(Calendar.DAY_OF_WEEK);
         switch (dayForWeek) {
             case 1:
                 week = "星期日";

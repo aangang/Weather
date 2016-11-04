@@ -30,3 +30,14 @@
 1. 简单优化天气主界面。
 1. 使用Android Studio JsonFormat自动生成复杂Bean，改用Gson解析天气数据，大幅简化代码。
 1. 增加部分工具类，优化部分代码，代码清晰度提高。
+
+----------
+
+###V2.0
+
+2016/11/3  更新：
+
+1. 天气主页面使用 ViewPager + Fragment + RecyclerView 。
+1. 网络请求使用 Rxjava + Retrofit + OKHttp，包括Rxbus 。
+1. 优化高德地位使用逻辑。
+1. 本地数据库手动选择省份城市。

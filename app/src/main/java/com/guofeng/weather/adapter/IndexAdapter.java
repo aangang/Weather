@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * fragment适配器
  * Created by GUOFENG on 2016/10/22.
  */
 

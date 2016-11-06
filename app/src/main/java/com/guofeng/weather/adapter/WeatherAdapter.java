@@ -20,6 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * 天气信息适配器
  * Created by GUOFENG on 2016/10/29.
  */
 

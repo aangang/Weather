@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.guofeng.weather.R;
 import com.guofeng.weather.adapter.CityAdapter;
+import com.guofeng.weather.base.ToolbarActivity;
 import com.guofeng.weather.db.WeatherDB;
 import com.guofeng.weather.db.WeatherDBHelper;
 import com.guofeng.weather.model.City;
@@ -28,6 +29,7 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
+ * 选择城市页
  * Created by GUOFENG on 2016/10/4.
  */
 public class CityChooseActivity extends ToolbarActivity {
@@ -59,7 +61,7 @@ public class CityChooseActivity extends ToolbarActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e(TAG, "onCreate");
         myRecyclerview = (RecyclerView) findViewById(R.id.myRecyclerview2);

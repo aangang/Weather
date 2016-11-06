@@ -7,6 +7,7 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.guofeng.weather.base.BaseApplication;
+import com.guofeng.weather.model.ChangeCityEvent;
 
 /**
  * 高德地图定位 工具类
@@ -14,6 +15,8 @@ import com.guofeng.weather.base.BaseApplication;
  */
 
 public class AMapLocationUtil {
+
+    private boolean isLocation;
 
     public AMapLocationUtil() {
         init();
@@ -42,19 +45,17 @@ public class AMapLocationUtil {
             if (aMapLocation != null) {
                 if (aMapLocation.getErrorCode() == 0) {
                     String mCity = MyUtil.replaceCity(aMapLocation.getCity());
-                    if (mCity.equals(""))
-                        ToastUtil.showShortToast("定位出错，请手动选择所在地~");
-                    else {
-                        ToastUtil.showShortToast("您所在位置：" + mCity);
-                        SharedPreferenceUtil.getInstance().setCityName(mCity);
-                    }
+                    SharedPreferenceUtil.getInstance().setCityName(mCity);
+                    RxBus.getDefault().post(new ChangeCityEvent());
                     stopAMap();
                 } else {
                     //定位失败时，可通过ErrCode错误码来确定失败的原因，errInfo是错误信息。
-                    Log.e("定位错误",
-                            "ErrCode:" + aMapLocation.getErrorCode()
+                    RxBus.getDefault().post(new ChangeCityEvent());
+
+                    Log.e("定位失败", "ErrCode:" + aMapLocation.getErrorCode()
                             + ", ErrInfo:" + aMapLocation.getErrorInfo());
-                    ToastUtil.showShortToast(aMapLocation.getErrorInfo());
+                    ToastUtil.showShortToast("获取位置失败啦");
+                    stopAMap();
                 }
             }
         }
@@ -126,7 +127,7 @@ public class AMapLocationUtil {
         mLocationClient.startLocation();
     }
 
-    public void stopAMap() {
+    private void stopAMap() {
         //停止定位,本地定位服务并不会被销毁
         mLocationClient.stopLocation();
         //销毁定位客户端，同时销毁本地定位服务,若要重新开启定位请重新New一个AMapLocationClient对象

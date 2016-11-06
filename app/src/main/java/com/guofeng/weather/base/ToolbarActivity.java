@@ -1,4 +1,4 @@
-package com.guofeng.weather.activity;
+package com.guofeng.weather.base;
 
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.guofeng.weather.R;
-import com.guofeng.weather.base.BaseActivity;
 
 /**
  * Activity 的通用 Toolbar

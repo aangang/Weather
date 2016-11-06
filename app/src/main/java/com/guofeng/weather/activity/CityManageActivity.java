@@ -12,6 +12,7 @@ import android.widget.Button;
 
 import com.guofeng.weather.R;
 import com.guofeng.weather.adapter.ManageAdapter;
+import com.guofeng.weather.base.ToolbarActivity;
 import com.guofeng.weather.util.SharedPreferenceUtil;
 import com.guofeng.weather.util.ToastUtil;
 
@@ -20,7 +21,10 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
+/**
+ * 管理城市页
+ * Created by GUOFENG on 2016/10/30.
+ */
 public class CityManageActivity extends ToolbarActivity {
 
     private ManageAdapter manageAdapter;
@@ -43,7 +47,7 @@ public class CityManageActivity extends ToolbarActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         intView();

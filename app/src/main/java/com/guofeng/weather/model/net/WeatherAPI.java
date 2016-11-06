@@ -1,4 +1,4 @@
-package com.guofeng.weather.util;
+package com.guofeng.weather.model.net;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

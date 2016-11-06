@@ -1,5 +1,6 @@
 package com.guofeng.weather.fragment;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,15 +16,17 @@ import com.guofeng.weather.adapter.WeatherAdapter;
 import com.guofeng.weather.base.BaseFragment;
 import com.guofeng.weather.model.ChangeCityEvent;
 import com.guofeng.weather.model.Weather;
+import com.guofeng.weather.model.net.RetrofitSingleton;
 import com.guofeng.weather.util.AMapLocationUtil;
-import com.guofeng.weather.util.RetrofitSingleton;
+import com.guofeng.weather.util.Emoji;
+import com.guofeng.weather.util.NotificationUtil;
 import com.guofeng.weather.util.RxBus;
 import com.guofeng.weather.util.SharedPreferenceUtil;
 import com.guofeng.weather.util.ToastUtil;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -49,7 +52,6 @@ public class MainFragment extends BaseFragment {
 
     private static Weather mWeather = new Weather();
     private WeatherAdapter mWeatherAdapter;
-    private Unbinder unbinder;
     private View view;
     String TAG = "MainFragment";
 
@@ -59,14 +61,12 @@ public class MainFragment extends BaseFragment {
     @Override
     protected void lazyLoad() {
         Log.e(TAG, "lazyLoad");
-
-        AMapLocationUtil.getDefault().startAMap();
         Load();
     }
 
 
     /**
-     * 城市改变后加载天气
+     * 城市定位改变后加载天气
      */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,8 +74,8 @@ public class MainFragment extends BaseFragment {
         Log.e(TAG, "onCreate");
         RxBus.getDefault().toObserverable(ChangeCityEvent.class)
                 .onBackpressureBuffer()
-                .unsubscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())//将在主线程进行
                 .subscribe(new Subscriber<ChangeCityEvent>() {
                     @Override
                     public void onCompleted() {
@@ -105,7 +105,7 @@ public class MainFragment extends BaseFragment {
         Log.e(TAG, "onCreateView");
         if (view == null) {
             view = inflater.inflate(R.layout.fragment_main, container, false);
-            unbinder = ButterKnife.bind(this, view);
+            ButterKnife.bind(this, view);
         }
         isCreateVew = true;
         return view;
@@ -117,7 +117,6 @@ public class MainFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         //super.onViewCreated(view, savedInstanceState);
-
         Log.e(TAG, "onViewCreated");
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setColorSchemeResources(
@@ -143,20 +142,42 @@ public class MainFragment extends BaseFragment {
         mWeatherAdapter = new WeatherAdapter(mWeather);
         recyclerView.setAdapter(mWeatherAdapter);
 
+        getPermissions();//获取定位权限
+    }
+
+    private void getPermissions() {
+        RxPermissions.getInstance(getActivity())
+                .request(Manifest.permission.ACCESS_COARSE_LOCATION)
+                .subscribe(new Subscriber<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        AMapLocationUtil.getDefault().startAMap();
+                    }
+                });
     }
 
     /**
-     * 网络加载天气数据
+     * 加载天气数据
      */
     private void Load() {
         fetchDataByNetWork().doOnRequest(new Action1<Long>() {
             @Override
             public void call(Long aLong) {
-                //swipeRefreshLayout.setRefreshing(true);
             }
         }).doOnError(new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {
+                Log.e("Load", throwable.getMessage());
                 recyclerView.setVisibility(View.GONE);
             }
         }).doOnNext(new Action1<Weather>() {
@@ -170,18 +191,15 @@ public class MainFragment extends BaseFragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         }).subscribeOn(Schedulers.io())
-                .unsubscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Weather>() {
                     @Override
                     public void onCompleted() {
-                        ToastUtil.showShortToast("加载天气完毕");
+                        ToastUtil.showShortToast("已经更新天气啦"+ Emoji.getEmoji("笑哭"));
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        ToastUtil.showShortToast(e.toString());
-
+                        ToastUtil.showShortToast(e.getMessage());
                     }
 
                     @Override
@@ -195,7 +213,7 @@ public class MainFragment extends BaseFragment {
                         mWeather.hourlyForecast = weather.hourlyForecast;
                         mWeather.dailyForecast = weather.dailyForecast;
                         mWeatherAdapter.notifyDataSetChanged();
-                        //normalStyleNotification(weather);
+                        NotificationUtil.getInstance().sendNotification(weather);
                     }
                 });
     }
@@ -213,7 +231,7 @@ public class MainFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         Log.e(TAG, "onDestroyView");
-        //unbinder.unbind();
     }
+
 
 }

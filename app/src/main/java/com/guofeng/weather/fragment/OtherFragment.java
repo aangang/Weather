@@ -14,12 +14,12 @@ import com.guofeng.weather.R;
 import com.guofeng.weather.adapter.WeatherAdapter;
 import com.guofeng.weather.base.BaseFragment;
 import com.guofeng.weather.model.Weather;
-import com.guofeng.weather.util.RetrofitSingleton;
+import com.guofeng.weather.model.net.RetrofitSingleton;
+import com.guofeng.weather.util.Emoji;
 import com.guofeng.weather.util.ToastUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -40,9 +40,8 @@ public class OtherFragment extends BaseFragment {
 
     private static Weather mWeather = new Weather();
     private WeatherAdapter mWeatherAdapter;
-    private Unbinder unbinder;
     private View view;
-    String TAG = "MainFragment";
+    String TAG = "OtherFragment";
     String city = null;
 
     /**
@@ -60,7 +59,7 @@ public class OtherFragment extends BaseFragment {
         Log.e(TAG, "onCreateView");
         if (view == null) {
             view = inflater.inflate(R.layout.fragment_main, container, false);
-            unbinder = ButterKnife.bind(this, view);
+            ButterKnife.bind(this, view);
         }
         Bundle bundle = getArguments();
         city = bundle.getString("FRAGMENT_CITY");
@@ -131,12 +130,12 @@ public class OtherFragment extends BaseFragment {
                 .subscribe(new Subscriber<Weather>() {
                     @Override
                     public void onCompleted() {
-                        ToastUtil.showShortToast("加载天气完毕");
+                        ToastUtil.showShortToast("已经更新天气啦" + Emoji.getEmoji("斜眼"));
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        ToastUtil.showShortToast(e.toString());
+                        ToastUtil.showShortToast(e.getMessage());
 
                     }
 
@@ -151,7 +150,6 @@ public class OtherFragment extends BaseFragment {
                         mWeather.hourlyForecast = weather.hourlyForecast;
                         mWeather.dailyForecast = weather.dailyForecast;
                         mWeatherAdapter.notifyDataSetChanged();
-                        //normalStyleNotification(weather);
                     }
                 });
     }
@@ -168,7 +166,6 @@ public class OtherFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         Log.e(TAG, "onDestroyView");
-        //unbinder.unbind();
     }
 
 }

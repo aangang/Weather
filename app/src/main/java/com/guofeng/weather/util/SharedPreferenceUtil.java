@@ -1,5 +1,6 @@
 package com.guofeng.weather.util;
 
+import android.app.Notification;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -12,11 +13,9 @@ import java.util.ArrayList;
  */
 public class SharedPreferenceUtil {
 
-    public static final String CITY_NAME = "城市";//选择城市
-    public static final String CITY_ID = "城市ID";
-    public static final String HOUR = "current_hour";//当前小时
-    public static final String CHANGE_ICONS = "change_icons";//切换图标
-    public static final String AUTO_UPDATE = "change_update_time"; //自动更新时长
+    public static final String CITY_NAME = "location";//选择城市
+    public static final String AUTO_UPDATE = "auto_update_time"; //自动更新时长
+    public static final String NOTIFICATION_MODEL = "notification_model";//通知栏模式
     private SharedPreferences mySP;
 
     public static SharedPreferenceUtil getInstance() {
@@ -60,34 +59,25 @@ public class SharedPreferenceUtil {
         return mySP.getBoolean(key, defValue);
     }
 
-    // 设置当前小时
-    public void setCurrentHour(int h) {
-        mySP.edit().putInt(HOUR, h).apply();
-    }
-
-    public int getCurrentHour() {
-        return mySP.getInt(HOUR, 0);
-    }
-
-    // 图标种类相关
-    public void setIconType(int type) {
-        mySP.edit().putInt(CHANGE_ICONS, type).apply();
-    }
-
-    public int getIconType() {
-        return mySP.getInt(CHANGE_ICONS, 0);
-    }
-
-    // 自动更新时间 hours
+    //自动更新时长
     public void setAutoUpdate(int t) {
         mySP.edit().putInt(AUTO_UPDATE, t).apply();
     }
 
     public int getAutoUpdate() {
-        return mySP.getInt(AUTO_UPDATE, 3);
+        return mySP.getInt(AUTO_UPDATE, 2);
     }
 
-    //当前城市
+    //通知栏默认为常驻
+    public void setNotificationModel(int t) {
+        mySP.edit().putInt(NOTIFICATION_MODEL, t).apply();
+    }
+
+    public int getNotificationModel() {
+        return mySP.getInt(NOTIFICATION_MODEL, Notification.FLAG_ONGOING_EVENT);
+    }
+
+    //定位城市
     public void setCityName(String name) {
         mySP.edit().putString(CITY_NAME, name).apply();
     }
@@ -96,6 +86,7 @@ public class SharedPreferenceUtil {
         return mySP.getString(CITY_NAME, "北京");
     }
 
+    //关注城市列表
     public boolean saveArray(ArrayList<String> arr) {
         mySP.edit().putInt("Status_size", arr.size()).apply(); /*sKey is an array*/
 

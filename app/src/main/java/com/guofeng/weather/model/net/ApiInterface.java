@@ -1,4 +1,4 @@
-package com.guofeng.weather.util;
+package com.guofeng.weather.model.net;
 
 import retrofit2.http.GET;
 import retrofit2.http.Query;

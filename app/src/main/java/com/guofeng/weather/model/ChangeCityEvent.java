@@ -6,16 +6,11 @@ package com.guofeng.weather.model;
 
 public class ChangeCityEvent {
     private String city;
-    private boolean isSetting;
 
     public ChangeCityEvent() {
     }
 
     public ChangeCityEvent(String city) {
         this.city = city;
-    }
-
-    public ChangeCityEvent(boolean isSetting) {
-        this.isSetting = isSetting;
     }
 }

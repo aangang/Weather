@@ -13,7 +13,7 @@ import com.guofeng.weather.R;
 import java.util.ArrayList;
 
 /**
- * 管理城市
+ * 管理城市适配器
  * Created by GUOFENG on 2016/11/3.
  */
 

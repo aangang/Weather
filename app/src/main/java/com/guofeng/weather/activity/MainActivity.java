@@ -16,6 +16,7 @@ import com.guofeng.weather.adapter.IndexAdapter;
 import com.guofeng.weather.base.BaseActivity;
 import com.guofeng.weather.fragment.MainFragment;
 import com.guofeng.weather.fragment.OtherFragment;
+import com.guofeng.weather.service.AutoUpdataService;
 import com.guofeng.weather.util.SharedPreferenceUtil;
 
 import java.util.ArrayList;
@@ -24,6 +25,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+/**
+ * 主页
+ * Created by GUOFENG on 2016/10/1.
+ */
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.toolbar)
@@ -70,7 +75,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             mIndexAdapter = new IndexAdapter(getSupportFragmentManager());
             MainFragment m = new MainFragment();
-            mIndexAdapter.addTab(m, "主页面");
+            mIndexAdapter.addTab(m, "所在地");
             if (list != null && list.size() != 0) {
                 for (int i = 0; i < list.size(); i++) {
                     OtherFragment my = new OtherFragment();
@@ -87,8 +92,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     //启动自动更新服务
     private void startAutoUpdataService() {
-        //Intent intent = new Intent(MainActivity.this, AutoUpdateService.class);
-        //startService(intent);
+        Intent intent = new Intent(MainActivity.this, AutoUpdataService.class);
+        startService(intent);
     }
 
 
@@ -96,7 +101,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         ArrayList<String> list = SharedPreferenceUtil.getInstance().getArray();
         mIndexAdapter = new IndexAdapter(getSupportFragmentManager());
         MainFragment m = new MainFragment();
-        mIndexAdapter.addTab(m, "主页面");
+        mIndexAdapter.addTab(m, "所在地");
         if (list != null && list.size() != 0) {
             for (int i = 0; i < list.size(); i++) {
                 OtherFragment my = new OtherFragment();

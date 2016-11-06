@@ -53,23 +53,15 @@
             android:name=".activity.MainActivity"
             android:configChanges="keyboardHidden|orientation"
             android:launchMode="singleTask">
-
         </activity>
 
         <activity android:name=".activity.CityManageActivity">
-
         </activity>
-
         <activity android:name=".activity.CityChooseActivity">
-
         </activity>
 
-
-        <!--
-        <service android:name=".service.AutoUpdateService" />-->
-        <receiver android:name=".receiver.AutoUpdateReceiver" />
-
+        <service android:name=".service.AutoUpdataService" />
+        <receiver android:name=".receiver.AutoUpdataReceiver" />
 
     </application>
-
 </manifest>

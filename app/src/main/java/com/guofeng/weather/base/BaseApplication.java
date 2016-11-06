@@ -3,24 +3,18 @@ package com.guofeng.weather.base;
 import android.app.Application;
 import android.content.Context;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
-
 
 public class BaseApplication extends Application {
 
     public static String cacheDir;
     private static Context myAppContext = null;
-    private static RequestQueue queues = null;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
         myAppContext = getApplicationContext();
-        queues = Volley.newRequestQueue(getApplicationContext());
-        /**
-         * 如果存在SD卡则将缓存写入SD卡,否则写入手机内存
-         */
+        //如果存在SD卡则将缓存写入SD卡,否则写入手机内存
         if (getApplicationContext().getExternalCacheDir() != null && ExistSDCard()) {
             cacheDir = getApplicationContext().getExternalCacheDir().toString();
         } else {
@@ -36,9 +30,6 @@ public class BaseApplication extends Application {
         return myAppContext;
     }
 
-    public synchronized static RequestQueue getHttpQueues() {
-        return queues;
-    }
 
     public static int getMemoryCacheSize() {
         //为了全局调用，在Application类中定义了cache大小的方法,官方建议取当前app可用内存的1/8。

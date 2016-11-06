@@ -11,8 +11,10 @@ public class C {
 
     public static final String PACKAGE_NAME = "com.guofeng.weather";
 
-    // 和风天气 key
-    public static final String HEFENG_KEY = "928ac8edfbb74d62bb834e9d7a4f9ac7";
+    //和风天气 key
+    //public static final String HEFENG_KEY = "928ac8edfbb74d62bb834e9d7a4f9ac7";
+    //public static final String HEFENG_KEY = "282f3846df6b41178e4a2218ae083ea7";
+    public static final String HEFENG_KEY = "ef54a96746e2406881660dd7f5e74fff";
 
     //SQLite
     public static final String DB_NAME = "china_city.db";//数据库名称

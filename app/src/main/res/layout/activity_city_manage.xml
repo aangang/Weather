@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <include layout="@layout/activity_normal_toolbar" />
+    <include layout="@layout/part_normal_toolbar" />
 
 
     <RelativeLayout

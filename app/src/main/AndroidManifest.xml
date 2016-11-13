@@ -28,6 +28,8 @@
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_app"
         android:label="@string/app_name"
+        android:persistent="true"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
         <!-- 高德地图定位，申请自己的Key -->
@@ -55,10 +57,10 @@
             android:launchMode="singleTask">
         </activity>
 
-        <activity android:name=".activity.CityManageActivity">
-        </activity>
-        <activity android:name=".activity.CityChooseActivity">
-        </activity>
+        <activity android:name=".activity.AboutActivity" />
+        <activity android:name=".activity.CityManageActivity"/>
+        <activity android:name=".activity.CityChooseActivity"/>
+        <activity android:name=".activity.SettingActivity"/>
 
         <service android:name=".service.AutoUpdataService" />
         <receiver android:name=".receiver.AutoUpdataReceiver" />

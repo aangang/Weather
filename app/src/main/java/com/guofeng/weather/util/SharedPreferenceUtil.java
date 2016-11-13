@@ -14,8 +14,9 @@ import java.util.ArrayList;
 public class SharedPreferenceUtil {
 
     public static final String CITY_NAME = "location";//选择城市
-    public static final String AUTO_UPDATE = "auto_update_time"; //自动更新时长
+    public static final String AUTO_UPDATE = "change_update_time"; //自动更新时长
     public static final String NOTIFICATION_MODEL = "notification_model";//通知栏模式
+    public static final String CLEAR_CACHE = "clear_cache";//清空缓存
     private SharedPreferences mySP;
 
     public static SharedPreferenceUtil getInstance() {
@@ -65,7 +66,7 @@ public class SharedPreferenceUtil {
     }
 
     public int getAutoUpdate() {
-        return mySP.getInt(AUTO_UPDATE, 2);
+        return mySP.getInt(AUTO_UPDATE, 3);
     }
 
     //通知栏默认为常驻

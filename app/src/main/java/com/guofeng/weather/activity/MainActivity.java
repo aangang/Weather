@@ -149,6 +149,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             case R.id.manage_cities:
                 startActivity(new Intent(MainActivity.this, CityManageActivity.class));
                 break;
+            case R.id.weather_set:
+                startActivity(new Intent(MainActivity.this, SettingActivity.class));
+                break;
+            case R.id.weather_about:
+                startActivity(new Intent(MainActivity.this, AboutActivity.class));
+                break;
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);

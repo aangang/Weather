@@ -7,6 +7,13 @@
     <string name="weather_set">基础设置</string>
     <string name="weather_about">关于作者</string>
 
+    <string name="html_guofeng_github">https://github.com/iamguofeng/weather</string>
+    <string name="html_guofeng_csdn">http://blog.csdn.net/plain_maple</string>
+    <string name="guofeng_alipay">122878486@qq.com</string>
+    <string name="share_app_txt">小伙伴们，一起来使用最简约好用的“滴答天气”，您可以在 https://github.com/iamguofeng 下载</string>
+    <string name="share_app">分享-滴答天气</string>
+    <string name="open_source">• 和风天气:http://www.heweather.com/\n• 高德定位:http://lbs.amap.com/\n•  Iconfont:http://www.iconfont.cn/plus\n• RxJava: github.com/ReactiveX/RxJava\n• RxAndroid: github.com/ReactiveX/RxAndroid\n• Retrofit: github.com/square/retrofit\n• Glide: github.com/bumptech/glide</string>
+    <string name="app_introduce">滴答天气是一款实用的天气软件。界面采用谷歌所倡导的 Material Design，即质感设计，使用新兴的 Rxjava + Retrofit 请求天气数据，还有，RxBus作事件总线。虽整体设计比较简约，但难免Bug缠身，望多多支持！</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

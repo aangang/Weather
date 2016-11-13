@@ -10,7 +10,8 @@ import rx.Observable;
 public interface ApiInterface {
 
     //基本URL
-    String BASIC_URL = "https://api.heweather.com/x3/";
+    String BASIC_URL = "https://free-api.heweather.com/v5/";
+    //String BASIC_URL = "https://free-api.heweather.com/x3/";
 
     //@GET注解表示get请求，@Query表示请求参数，将会以key=value方式拼接在url后面
     @GET("weather")

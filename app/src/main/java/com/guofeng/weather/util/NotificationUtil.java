@@ -28,30 +28,35 @@ public class NotificationUtil {
 
     private NotificationUtil() {
 
+
     }
 
     private final int Notification_ID = 1;
+    private PendingIntent pendingIntent;
+    private Notification.Builder myBuilder;
+    private Notification myNotification;
+    public static NotificationManager manager;
 
     public void sendNotification(Weather weather) {
         Intent intent = new Intent(BaseApplication.getMyAppContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(
+        pendingIntent = PendingIntent.getActivity(
                 BaseApplication.getMyAppContext(),
                 0,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT
         );
 
-        Notification.Builder myBuilder = new Notification.Builder(BaseApplication.getMyAppContext());
+        myBuilder = new Notification.Builder(BaseApplication.getMyAppContext());
         myBuilder.setContentIntent(pendingIntent)
                 .setContentTitle(weather.basic.city)
                 .setContentText(String.format("%s     %s℃", weather.now.cond.txt, weather.now.tmp))
                 .setSmallIcon(SharedPreferenceUtil.getInstance().getInt(weather.now.cond.txt, R.mipmap.type_none));
 
-        Notification myNotification = myBuilder.build();
+        myNotification = myBuilder.build();
         myNotification.flags = SharedPreferenceUtil.getInstance().getNotificationModel();
-        NotificationManager manager = (NotificationManager) BaseApplication.getMyAppContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        manager = (NotificationManager) BaseApplication.getMyAppContext().getSystemService(Context.NOTIFICATION_SERVICE);
         // tag和id可以区分不同的通知
         manager.notify(Notification_ID, myNotification);
     }

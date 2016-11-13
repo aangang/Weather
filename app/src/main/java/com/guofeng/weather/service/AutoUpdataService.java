@@ -43,13 +43,28 @@ public class AutoUpdataService extends Service {
             PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent_for_receiver, 0);
             manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
         }//end synchronized
-        return super.onStartCommand(intent, flags, startId);
+        //return START_REDELIVER_INTENT;
+        return START_STICKY;
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Intent localIntent = new Intent();
+        localIntent.setClass(this, AutoUpdataService.class); // 销毁时重新启动Service
+        this.startService(localIntent);
+    }
+
+    @Override
+    public boolean stopService(Intent name) {
+        return super.stopService(name);
     }
 
     private void updateWeatherFromNet() {

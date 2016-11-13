@@ -54,6 +54,12 @@ public class CityManageActivity extends ToolbarActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        getToolbar().setTitle("管理关注城市");
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (resultCode) { //选择城市回传的是RESULT_OK
             case RESULT_OK:
@@ -68,7 +74,7 @@ public class CityManageActivity extends ToolbarActivity {
 
     @OnClick(R.id.add_city)
     public void addCity() {
-        if (list.size() < 3) {
+        if (list.size() < 2) {
             Intent intent = new Intent(CityManageActivity.this, CityChooseActivity.class);
             startActivityForResult(intent, 100);
         } else {

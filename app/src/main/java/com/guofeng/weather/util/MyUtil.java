@@ -1,5 +1,7 @@
 package com.guofeng.weather.util;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -73,6 +75,14 @@ public class MyUtil {
                 break;
         }
         return week;
+    }
+
+    //复制剪切板
+    public static void copyToClipboard(String info, Context context) {
+        ClipboardManager manager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clipData = ClipData.newPlainText("msg", info);
+        manager.setPrimaryClip(clipData);
+        ToastUtil.showShortToast(String.format("作者的支付宝 %s 已经复制啦！", info));
     }
 
 }

@@ -15,14 +15,12 @@ import com.guofeng.weather.R;
  */
 
 public abstract class ToolbarActivity extends BaseActivity {
-    //
-//    @BindView(R.id.toolbar_normal)
+
     Toolbar myToolbar;
-    //
-//    @BindView(R.id.appbar_normal)
     AppBarLayout myAppBar;
 
     abstract protected int provideContentViewId();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +47,13 @@ public abstract class ToolbarActivity extends BaseActivity {
                 //给左上角加一个返回的图标
                 actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
     }
 
     public boolean canBack() {
         return false;
     }
+
 
     public Toolbar getToolbar() {
         return myToolbar;

@@ -19,7 +19,6 @@ import com.guofeng.weather.model.Weather;
 import com.guofeng.weather.model.net.RetrofitSingleton;
 import com.guofeng.weather.util.AMapLocationUtil;
 import com.guofeng.weather.util.Emoji;
-import com.guofeng.weather.util.NotificationUtil;
 import com.guofeng.weather.util.RxBus;
 import com.guofeng.weather.util.SharedPreferenceUtil;
 import com.guofeng.weather.util.ToastUtil;
@@ -213,7 +212,7 @@ public class MainFragment extends BaseFragment {
                         mWeather.hourlyForecast = weather.hourlyForecast;
                         mWeather.dailyForecast = weather.dailyForecast;
                         mWeatherAdapter.notifyDataSetChanged();
-                        NotificationUtil.getInstance().sendNotification(weather);
+                       // NotificationUtil.getInstance().sendNotification(weather);
                     }
                 });
     }

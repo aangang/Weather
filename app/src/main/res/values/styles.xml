@@ -14,4 +14,13 @@
         <item name="android:windowBackground">@mipmap/ic_splash</item>
     </style>
 
+    <style name="textToolbarTitle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
+    <style name="textToolbarContent">
+        <item name="android:textColor">#70ffffff</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

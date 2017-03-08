@@ -1,13 +1,12 @@
-# DiDaWeather 滴答天气 
+###关于
 
-## Auther：郭峰
-## Email: iamguofeng@163.com
-## CSDN: http://blog.csdn.net/plain_maple
-## GitHub: https://github.com/iamguofeng
+1. Auther：郭峰
+2. Email: iamguofeng@163.com
+3. CSDN: http://blog.csdn.net/plain_maple
 
-1. 和风天气V5接口
-1. 页面：ViewPager + Fragment + RecyclerView
-1. 网络： Rxjava + Rxbus + Retrofit
+###说明
+
+Android 客户端使用和风天气V5接口，Rxjava + Rxbus + Retrofit 获取数据，页面采用ViewPager + Fragment + RecyclerView。
 
 
 

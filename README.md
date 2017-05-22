@@ -1,12 +1,17 @@
-###关于
+项目说明
+------
 
-1. Auther：郭峰
-2. Email: iamguofeng@163.com
-3. CSDN: http://blog.csdn.net/plain_maple
+* 和风天气 V5 接口
+* Rxjava + Rxbus + Retrofit
+* ViewPager + Fragment + RecyclerView
 
-###说明
 
-Android 客户端使用和风天气V5接口，Rxjava + Rxbus + Retrofit 获取数据，页面采用ViewPager + Fragment + RecyclerView。
+联系方式
+------
+* Auther 郭峰
+* Email: iamguofeng@163.com 
+* CSDN: http://blog.csdn.net/plain_maple
+
 
 
 
